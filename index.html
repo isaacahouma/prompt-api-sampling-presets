@@ -1218,9 +1218,14 @@
   <!-- Live Environment Availability & 1-Click Launch Bar -->
   <div class="status-panel" id="status-panel">
     <div class="status-header-row">
-      <div class="status-badge">
-        <span class="status-dot green" id="status-dot"></span>
-        <span id="status-text">Detecting Prompt API Environment...</span>
+      <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+        <div class="status-badge">
+          <span class="status-dot green" id="status-dot"></span>
+          <span id="status-text">Detecting Prompt API Environment...</span>
+        </div>
+        <div class="status-badge" id="browser-version-pill" style="font-family:var(--font-mono); font-size:0.76rem; font-weight:600; background:var(--bg-secondary); border:1px solid var(--border-color); color:var(--text-main); display:none;">
+          <span id="browser-version-text">Detecting Chrome...</span>
+        </div>
       </div>
       <button class="btn-secondary" id="toggle-activation-guide-btn" style="padding: 5px 12px; font-size: 0.8rem; font-weight: 600;">
         🚀 Setup &amp; Flags Guide
@@ -1999,6 +2004,54 @@ console.log("\\n=== Response (${presetId}) ===\\n" + response);`;
   }
 }
 
+// Active modal code state
+let currentModalCode = "";
+
+// Open interactive Code Inspector Modal for a specific preset
+function openCodeModal(presetId) {
+  const userPrompt = document.getElementById("user-prompt")?.value || "";
+  const systemPrompt = document.getElementById("system-prompt")?.value || "";
+  const isStreaming = document.getElementById("prompt-streaming-toggle")?.checked ?? true;
+  const p = PRESETS.find(x => x.id === presetId) || PRESETS[0];
+
+  currentModalCode = generateRunnableSnippet(presetId, userPrompt, systemPrompt, isStreaming);
+  
+  const box = document.getElementById("modal-code-box");
+  const badge = document.getElementById("modal-preset-badge");
+  const backdrop = document.getElementById("code-modal-backdrop");
+  
+  if (box) box.innerHTML = highlightJsCode(currentModalCode);
+  if (badge) {
+    badge.textContent = `${p.name} (${p.semantic})`;
+    badge.style.color = p.color;
+  }
+  if (backdrop) backdrop.classList.add("show");
+}
+window.openCodeModal = openCodeModal;
+
+function closeCodeModal() {
+  const backdrop = document.getElementById("code-modal-backdrop");
+  if (backdrop) backdrop.classList.remove("show");
+}
+window.closeCodeModal = closeCodeModal;
+
+function copyModalCode() {
+  if (!currentModalCode) return;
+  navigator.clipboard.writeText(currentModalCode);
+  const btn = document.getElementById("modal-copy-btn");
+  if (btn) {
+    const original = btn.textContent;
+    btn.textContent = "✓ Copied to Clipboard!";
+    setTimeout(() => { btn.textContent = original; }, 2000);
+  }
+}
+window.copyModalCode = copyModalCode;
+
+// Escape key to close modal
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") closeCodeModal();
+});
+
 // Render dynamic code in Tab 4
 function renderHighlightedCode() {
   const container = document.getElementById("code-snippet-box");
@@ -2241,12 +2294,55 @@ function getPresetText(presetId, userPrompt, systemPrompt, runIndex = 0, isPlain
   return isPlainTextOnly ? sanitizePlainText(result) : result;
 }
 
+// High-Precision Chrome Version Detection (User-Agent Client Hints + Fallback)
+async function detectBrowserVersion() {
+  let fullVersion = "";
+  let brandName = "Chrome";
+
+  if (navigator.userAgentData && typeof navigator.userAgentData.getHighEntropyValues === "function") {
+    try {
+      const data = await navigator.userAgentData.getHighEntropyValues(["fullVersionList"]);
+      const chromeBrand = (data.fullVersionList || []).find(b => b.brand === "Google Chrome" || b.brand === "Chromium");
+      if (chromeBrand) {
+        fullVersion = chromeBrand.version;
+        brandName = chromeBrand.brand === "Google Chrome" ? "Google Chrome" : "Chromium";
+      }
+    } catch (e) {}
+  }
+
+  if (!fullVersion) {
+    const uaMatch = navigator.userAgent.match(/(?:Chrome|Chromium)\/([0-9.]+)/);
+    if (uaMatch) {
+      fullVersion = uaMatch[1];
+    }
+  }
+
+  const pill = document.getElementById("browser-version-pill");
+  if (!pill) return { fullVersion, brandName };
+
+  if (fullVersion) {
+    pill.style.display = "inline-flex";
+    const major = parseInt(fullVersion.split('.')[0], 10) || 0;
+    const isBaseline = major < 154;
+    pill.innerHTML = `🌐 <strong>${brandName} ${fullVersion}</strong> <span style="font-weight:normal; color:var(--text-muted); margin-left:4px;">(${isBaseline ? 'M151 Baseline' : 'M154+ Full Spectrum'})</span>`;
+    pill.title = isBaseline 
+      ? `Active browser is ${brandName} ${fullVersion} (Supports 5 baseline presets. Presets 'slightly-predictable' & 'slightly-creative' require Chrome 154+ / CL 8119572).`
+      : `Active browser is ${brandName} ${fullVersion} (Supports all 7 presets).`;
+  } else {
+    pill.style.display = "inline-flex";
+    pill.innerHTML = `🌐 <strong>Browser: Non-Chromium</strong>`;
+  }
+
+  return { fullVersion, brandName };
+}
+
 // Check Environment Diagnostics
 async function checkApiAvailability() {
   const dot = document.getElementById("status-dot");
   const text = document.getElementById("status-text");
   const guide = document.getElementById("activation-guide-box");
 
+  const { fullVersion } = await detectBrowserVersion();
   const resolved = resolveLM();
 
   if (!resolved) {
@@ -2275,14 +2371,15 @@ async function checkApiAvailability() {
       }
       window.supportedSamplingModes = new Set(supportedModes);
 
+      const verLabel = fullVersion ? ` on Chrome ${fullVersion}` : "";
       if (supportedModes.length >= 7) {
-        text.innerHTML = `● <strong>LanguageModel Ready</strong> (Native <code>samplingMode</code>: All 7 Presets Supported)`;
+        text.innerHTML = `● <strong>LanguageModel Ready</strong> (All 7 Presets Supported${verLabel})`;
       } else if (supportedModes.length >= 5) {
-        text.innerHTML = `● <strong>LanguageModel Ready</strong> (Native <code>samplingMode</code>: 5 Baseline Presets Supported, M151-153)`;
+        text.innerHTML = `● <strong>LanguageModel Ready</strong> (5 Baseline Presets Supported${verLabel})`;
       } else if (supportedModes.length > 0) {
-        text.innerHTML = `● <strong>LanguageModel Ready</strong> (Native <code>samplingMode</code>: ${supportedModes.length} Presets Supported)`;
+        text.innerHTML = `● <strong>LanguageModel Ready</strong> (${supportedModes.length} Presets Supported${verLabel})`;
       } else {
-        text.innerHTML = `● <strong>LanguageModel Ready</strong> (On-Device Gemini Nano Connected)`;
+        text.innerHTML = `● <strong>LanguageModel Ready</strong> (On-Device Gemini Nano Connected${verLabel})`;
       }
     } else if (availability === "after-download" || availability === "downloadable") {
       dot.className = "status-dot yellow";
