@@ -1297,7 +1297,7 @@
     <div class="spectrum-header">
       <h2>Categorical Presets Spectrum</h2>
       <div style="font-size: 0.8rem; color: var(--text-muted);">
-        Canonical Order: <code>most-predictable</code> (T=0.0) &rarr; <code>most-creative</code> (T=1.2)
+        Canonical Order: <code>most-predictable</code> (Deterministic) &rarr; <code>most-creative</code> (Maximum Novelty)
       </div>
     </div>
     <div class="preset-grid" id="preset-summary-grid">
@@ -1402,7 +1402,7 @@
             <strong>🎯 Purpose of Multi-Run Repeatability Testing:</strong>
             <p style="margin-top: 4px; color: var(--text-muted);">
               Runs the exact same prompt <em>multiple times</em> through <code>LanguageModel.create({ samplingMode })</code> to observe entropy behavior.
-              <strong><code>most-predictable</code> (Temperature: 0.0, Top-K: 1)</strong> guarantees <strong>100% identical outputs</strong> across runs (essential for unit tests, code generation, and deterministic workflows).
+              <strong><code>most-predictable</code> (Greedy Decoding)</strong> guarantees <strong>100% identical outputs</strong> across runs (essential for unit tests, code generation, and deterministic workflows).
               In contrast, <strong><code>creative</code> &amp; <code>most-creative</code></strong> sample different vocabulary paths on every run.
             </p>
           </div>
@@ -1411,13 +1411,13 @@
             <div class="field-group" style="flex: 1; min-width: 200px;">
               <label>Select Preset to Test</label>
               <select id="variance-preset-select">
-                <option value="most-predictable">most-predictable (T: 0.0, topK: 1) — Fully Deterministic</option>
-                <option value="predictable">predictable (T: 0.3, topK: 32) — Very Low Variance</option>
-                <option value="slightly-predictable">slightly-predictable (T: 0.7, topK: 64) — Controlled Coherence</option>
-                <option value="balanced" selected>balanced (T: 1.0, topK: 64) — Moderate Variance</option>
-                <option value="slightly-creative">slightly-creative (T: 1.1, topK: 72) — Expressive Variance</option>
-                <option value="creative">creative (T: 1.15, topK: 80) — High Divergence</option>
-                <option value="most-creative">most-creative (T: 1.2, topK: 100) — Maximum Entropy</option>
+                <option value="most-predictable">most-predictable — Fully Deterministic (Greedy)</option>
+                <option value="predictable">predictable — Very Low Variance</option>
+                <option value="slightly-predictable">slightly-predictable — Controlled Coherence</option>
+                <option value="balanced" selected>balanced — Moderate Variance (Default)</option>
+                <option value="slightly-creative">slightly-creative — Expressive Variety</option>
+                <option value="creative">creative — High Divergence</option>
+                <option value="most-creative">most-creative — Maximum Novelty</option>
               </select>
             </div>
 
@@ -1577,15 +1577,15 @@
 
               <div class="plain-math-item">
                 <strong>2. Monotonic Scaling Across Presets:</strong>
-                <span>As Temperature and Top-K increase from <code>most-predictable</code> (T: 0.0, K: 1) to <code>most-creative</code> (T: 1.2, K: 100), the token probability distribution flattens, resulting in higher observed entropy (more diverse vocabulary and metaphors).</span>
+                <span>As presets transition along the semantic spectrum from <code>most-predictable</code> to <code>most-creative</code>, the probability mass shifts from greedy single-path selection to broader exploration across the vocabulary tail, elevating observed empirical lexical entropy.</span>
               </div>
             </div>
 
             <div style="font-size: 0.82rem; color: var(--text-muted); display: flex; gap: 16px; flex-wrap: wrap; margin-top: 4px;">
               <span>📖 Further Reading:</span>
               <a href="https://en.wikipedia.org/wiki/Entropy_(information_theory)" target="_blank" style="color: var(--accent-blue); text-decoration: none;">Wikipedia: Shannon Entropy &rarr;</a>
-              <a href="https://github.com/webmachinelearning/prompt-api/issues/203" target="_blank" style="color: var(--accent-blue); text-decoration: none;">Prompt API Spec Issue #203 &rarr;</a>
-              <a href="https://en.wikipedia.org/wiki/Softmax_function#Reinforcement_learning" target="_blank" style="color: var(--accent-blue); text-decoration: none;">Softmax Temperature Sampling &rarr;</a>
+              <a href="https://github.com/webmachinelearning/prompt-api/issues/203" target="_blank" style="color: var(--accent-blue); text-decoration: none;">W3C Prompt API Spec Issue #203 &rarr;</a>
+              <a href="https://github.com/webmachinelearning/prompt-api" target="_blank" style="color: var(--accent-blue); text-decoration: none;">Prompt API Explainer &rarr;</a>
             </div>
           </div>
 
@@ -1594,7 +1594,7 @@
             <thead>
               <tr>
                 <th>Sampling Preset</th>
-                <th>Temp / Top-K</th>
+                <th>Semantic Profile</th>
                 <th>Samples ($N$)</th>
                 <th>Median Latency [Min &mdash; Max]</th>
                 <th>Median Tokens</th>
@@ -1625,13 +1625,13 @@
           <div style="display: flex; gap: 10px; align-items: center;">
             <label style="font-size: 0.82rem; color: var(--text-muted); font-weight: 600;">Sampling Mode:</label>
             <select class="control-select" id="code-tab-preset-select" style="width: auto; padding: 4px 10px; font-size: 0.82rem;">
-              <option value="most-predictable">most-predictable (T: 0.0, K: 1)</option>
-              <option value="predictable">predictable (T: 0.3, K: 32)</option>
-              <option value="slightly-predictable">slightly-predictable (T: 0.7, K: 64)</option>
-              <option value="balanced" selected>balanced (T: 1.0, K: 64)</option>
-              <option value="slightly-creative">slightly-creative (T: 1.1, K: 72)</option>
-              <option value="creative">creative (T: 1.15, K: 80)</option>
-              <option value="most-creative">most-creative (T: 1.2, K: 100)</option>
+              <option value="most-predictable">most-predictable — Fully Deterministic (Greedy)</option>
+              <option value="predictable">predictable — Very Low Variance</option>
+              <option value="slightly-predictable">slightly-predictable — Controlled Coherence</option>
+              <option value="balanced" selected>balanced — Moderate Variance (Default)</option>
+              <option value="slightly-creative">slightly-creative — Expressive Variety</option>
+              <option value="creative">creative — High Divergence</option>
+              <option value="most-creative">most-creative — Maximum Novelty</option>
             </select>
           </div>
         </div>
@@ -1655,15 +1655,18 @@
           <thead>
             <tr style="background: var(--bg-card); text-align: left; border-bottom: 1px solid var(--border-color);">
               <th style="padding: 10px 12px; color: var(--text-muted);">Preset ID</th>
-              <th style="padding: 10px 12px; color: var(--text-muted);">Default Temp</th>
-              <th style="padding: 10px 12px; color: var(--text-muted);">Default Top-K</th>
-              <th style="padding: 10px 12px; color: var(--text-muted);">Semantic Intent &amp; Use-Cases</th>
+              <th style="padding: 10px 12px; color: var(--text-muted);">Semantic Profile</th>
+              <th style="padding: 10px 12px; color: var(--text-muted);">Behavioral Contract</th>
+              <th style="padding: 10px 12px; color: var(--text-muted);">Target Workloads</th>
             </tr>
           </thead>
           <tbody id="spec-table-body">
             <!-- Injected via JS -->
           </tbody>
         </table>
+        <div style="margin-top: 14px; padding: 12px 16px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.8rem; color: var(--text-muted); line-height: 1.5;">
+          <strong>💡 Hyperparameter Abstraction:</strong> Under the W3C Prompt API proposal (<a href="https://github.com/webmachinelearning/prompt-api/issues/203" target="_blank" style="color: var(--accent-blue);">Issue #203</a>), <code>samplingMode</code> abstracts away model-specific hyperparameters (such as temperature, top-k, and top-p). This establishes a durable semantic contract across diverse hardware architectures and model weights without requiring web developers to tune internal hyperparameters.
+        </div>
       </div>
     </div>
   </div>
@@ -1704,64 +1707,71 @@ const PRESETS = [
   {
     id: "most-predictable",
     name: "most-predictable",
+    semantic: "Deterministic / Greedy",
     temp: 0.0,
     topK: 1,
     color: "#3fb950",
-    desc: "Fully deterministic greedy decoding. Zero randomness.",
+    desc: "Strict greedy decoding. Guarantees 100% identical outputs across runs.",
     useCase: "Code generation, strict JSON/schema extraction, math proofs, fact checking."
   },
   {
     id: "predictable",
     name: "predictable",
+    semantic: "Very Low Variance",
     temp: 0.3,
     topK: 32,
     color: "#58a6ff",
-    desc: "Low variance with tight factual grounding.",
+    desc: "High factual grounding and tight coherence with minimal lexical drift.",
     useCase: "Translation, structured summaries, entity extraction, data formatting."
   },
   {
     id: "slightly-predictable",
     name: "slightly-predictable",
+    semantic: "Controlled Coherence",
     temp: 0.7,
     topK: 64,
     color: "#79c0ff",
-    desc: "Controlled variance with high structural coherence.",
+    desc: "Structural precision with moderate stylistic flexibility.",
     useCase: "Technical documentation, essays, explainers, reports."
   },
   {
     id: "balanced",
     name: "balanced",
+    semantic: "Balanced / Standard",
     temp: 1.0,
     topK: 64,
     color: "#d29922",
-    desc: "Standard general-purpose distribution.",
+    desc: "Standard general-purpose distribution for everyday conversational tasks.",
     useCase: "General conversation, multi-turn Q&A, versatile everyday tasks."
   },
   {
     id: "slightly-creative",
     name: "slightly-creative",
+    semantic: "Expressive Variety",
     temp: 1.1,
     topK: 72,
     color: "#f0883e",
-    desc: "Expressive vocabulary with engaging rhythm.",
+    desc: "Richer vocabulary and expressive prose for engaging copywriting.",
     useCase: "Blog posts, creative copy, conversational dialogues."
   },
   {
     id: "creative",
     name: "creative",
+    semantic: "High Divergence",
     temp: 1.15,
     topK: 80,
     color: "#bc8cff",
-    desc: "High narrative divergence and rich metaphorical ideas.",
+    desc: "High narrative divergence and imaginative multi-path generation.",
     useCase: "Fiction, storytelling, worldbuilding, brainstorming."
   },
   {
     id: "most-creative",
     name: "most-creative",
+    semantic: "Maximum Novelty",
     temp: 1.2,
     topK: 100,
     color: "#f85149",
-    desc: "Maximum entropy sampling with broadest vocabulary.",
+    desc: "Maximum entropy sampling across the broadest vocabulary tail.",
     useCase: "Poetry, surreal metaphors, unconventional concept ideation."
   }
 ];
@@ -1877,24 +1887,32 @@ function calculateStats(numbers) {
   return { min, max, median, mean, count };
 }
 
-// Syntax highlighter helper
+// Safe Tokenizer-based syntax highlighter (prevents HTML tag corruption / syn-c> errors)
 function highlightJsCode(rawCode) {
-  let code = rawCode;
-  // HTML escape
-  code = code.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-  // Comments
-  code = code.replace(/(\/\/[^\n]*)/g, '<span class="syn-c">$1</span>');
-  // Keywords
-  code = code.replace(/\b(const|let|var|await|async|for|of|if|else|return|new)\b/g, '<span class="syn-k">$1</span>');
-  // Functions
-  code = code.replace(/\b(availability|create|prompt|promptStreaming|log|write|destroy)\b(?=\()/g, '<span class="syn-f">$1</span>');
-  // Classes
-  code = code.replace(/\b(LanguageModel|console)\b/g, '<span class="syn-f" style="color:var(--accent-purple);">$1</span>');
-  // Strings
-  code = code.replace(/("[^"\\]*(?:\\.[^"\\]*)*"|'[^'\\]*(?:\\.[^'\\]*)*')/g, '<span class="syn-s">$1</span>');
-  // Properties
-  code = code.replace(/\b(samplingMode|systemPrompt|initialPrompts|role|content|temperature|topK)\b(?=:)/g, '<span class="syn-p">$1</span>');
-  return code;
+  const tokens = [];
+  const regex = /(\/\/[^\n]*)|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')|(\b(?:const|let|var|await|async|for|of|if|else|return|new)\b)|(\b(?:LanguageModel|console)\b)|(\b(?:availability|create|prompt|promptStreaming|log|write|destroy)\b)(?=\()|(\b(?:samplingMode|systemPrompt|initialPrompts|role|content)\b)(?=:)|([A-Za-z0-9_$]+|[^\sA-Za-z0-9_$]+|\s+)/g;
+
+  const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  let match;
+  while ((match = regex.exec(rawCode)) !== null) {
+    const [full, comment, str, kw, cls, fn, prop] = match;
+    if (comment) {
+      tokens.push(`<span class="syn-c">${esc(comment)}</span>`);
+    } else if (str) {
+      tokens.push(`<span class="syn-s">${esc(str)}</span>`);
+    } else if (kw) {
+      tokens.push(`<span class="syn-k">${esc(kw)}</span>`);
+    } else if (cls) {
+      tokens.push(`<span class="syn-f" style="color:var(--accent-purple);">${esc(cls)}</span>`);
+    } else if (fn) {
+      tokens.push(`<span class="syn-f">${esc(fn)}</span>`);
+    } else if (prop) {
+      tokens.push(`<span class="syn-p">${esc(prop)}</span>`);
+    } else {
+      tokens.push(esc(full));
+    }
+  }
+  return tokens.join("");
 }
 
 // Generate immediately runnable JavaScript code for DevTools Console / web apps
@@ -1905,6 +1923,8 @@ function generateRunnableSnippet(presetId, userPrompt, systemPrompt, isStreaming
   const safeUser = uPrompt.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n');
   const safeSys = sPrompt ? sPrompt.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n') : "";
 
+  const sysSnippet = safeSys ? `,\n  initialPrompts: [\n    { role: "system", content: "${safeSys}" }\n  ]` : "";
+
   if (isStreaming) {
     return `// 1. Check model availability for "${presetId}" preset
 const availability = await LanguageModel.availability({
@@ -1914,7 +1934,7 @@ console.log("Model Status:", availability);
 
 // 2. Initialize LanguageModel session with categorical preset
 const session = await LanguageModel.create({
-  samplingMode: "${presetId}"${safeSys ? `,\n  systemPrompt: "${safeSys}"` : ''}
+  samplingMode: "${presetId}"${sysSnippet}
 });
 
 console.log("Active Preset:", session.samplingMode);
@@ -1937,7 +1957,7 @@ console.log("Model Status:", availability);
 
 // 2. Initialize LanguageModel session with categorical preset
 const session = await LanguageModel.create({
-  samplingMode: "${presetId}"${safeSys ? `,\n  systemPrompt: "${safeSys}"` : ''}
+  samplingMode: "${presetId}"${sysSnippet}
 });
 
 console.log("Active Preset:", session.samplingMode);
@@ -1966,7 +1986,7 @@ function openCodeModal(presetId) {
   
   if (box) box.innerHTML = highlightJsCode(currentModalCode);
   if (badge) {
-    badge.textContent = `${p.name} (T: ${p.temp}, K: ${p.topK})`;
+    badge.textContent = `${p.name} (${p.semantic})`;
     badge.style.color = p.color;
   }
   if (backdrop) backdrop.classList.add("show");
@@ -2062,24 +2082,13 @@ function copyText(elementId) {
   alert("Copied to clipboard: " + text);
 }
 
-// Universal LanguageModel Resolver
+// Universal Standard LanguageModel Resolver (strictly adhering to W3C Prompt API spec)
 function resolveLM() {
-  if (typeof window.LanguageModel !== "undefined") {
+  if (typeof window !== "undefined" && typeof window.LanguageModel !== "undefined") {
     return { obj: window.LanguageModel, type: "LanguageModel" };
-  }
-  if (typeof window.ai !== "undefined") {
-    if (typeof window.ai.languageModel !== "undefined") {
-      return { obj: window.ai.languageModel, type: "ai.languageModel" };
-    }
-    if (typeof window.ai.assistant !== "undefined") {
-      return { obj: window.ai.assistant, type: "ai.assistant" };
-    }
   }
   if (typeof LanguageModel !== "undefined") {
     return { obj: LanguageModel, type: "LanguageModel" };
-  }
-  if (typeof ai !== "undefined" && typeof ai.languageModel !== "undefined") {
-    return { obj: ai.languageModel, type: "ai.languageModel" };
   }
   return null;
 }
@@ -2227,13 +2236,13 @@ function getPresetText(presetId, userPrompt, systemPrompt, runIndex = 0, isPlain
   else {
     const cleanPrompt = userPrompt || "the prompt";
     const map = {
-      "most-predictable": `• Evaluation: "${cleanPrompt}"\n• Sampling Mode: most-predictable (T=0.0, topK=1)\n• Characteristics: Strict deterministic accuracy, identical repeatability.`,
-      "predictable": `• Analysis: "${cleanPrompt}"\n• Sampling Mode: predictable (T=0.3, topK=32)\n• Characteristics: Factual grounding with minimal stylistic deviation.`,
-      "slightly-predictable": `• Synthesis: "${cleanPrompt}"\n• Sampling Mode: slightly-predictable (T=0.7, topK=64)\n• Characteristics: Controlled variance with high structural clarity.`,
-      "balanced": `• Reflection: "${cleanPrompt}"\n• Sampling Mode: balanced (T=1.0, topK=64)\n• Characteristics: Well-rounded conversational prose for general use.`,
-      "slightly-creative": `• Exploration: "${cleanPrompt}"\n• Sampling Mode: slightly-creative (T=1.1, topK=72)\n• Characteristics: Expressive vocabulary with rhythmic phrasing.`,
-      "creative": `• Perspective: "${cleanPrompt}"\n• Sampling Mode: creative (T=1.15, topK=80)\n• Characteristics: Rich narrative angles, metaphors, and imaginative flow.`,
-      "most-creative": `• Vision: "${cleanPrompt}"\n• Sampling Mode: most-creative (T=1.2, topK=100)\n• Characteristics: Maximum entropy sampling with unconventional vocabulary exploration.`
+      "most-predictable": `• Evaluation: "${cleanPrompt}"\n• Sampling Mode: most-predictable \n• Characteristics: Strict deterministic accuracy, identical repeatability.`,
+      "predictable": `• Analysis: "${cleanPrompt}"\n• Sampling Mode: predictable \n• Characteristics: Factual grounding with minimal stylistic deviation.`,
+      "slightly-predictable": `• Synthesis: "${cleanPrompt}"\n• Sampling Mode: slightly-predictable \n• Characteristics: Controlled variance with high structural clarity.`,
+      "balanced": `• Reflection: "${cleanPrompt}"\n• Sampling Mode: balanced \n• Characteristics: Well-rounded conversational prose for general use.`,
+      "slightly-creative": `• Exploration: "${cleanPrompt}"\n• Sampling Mode: slightly-creative \n• Characteristics: Expressive vocabulary with rhythmic phrasing.`,
+      "creative": `• Perspective: "${cleanPrompt}"\n• Sampling Mode: creative \n• Characteristics: Rich narrative angles, metaphors, and imaginative flow.`,
+      "most-creative": `• Vision: "${cleanPrompt}"\n• Sampling Mode: most-creative \n• Characteristics: Maximum entropy sampling with unconventional vocabulary exploration.`
     };
     result = map[presetId] || map["balanced"];
   }
@@ -2275,7 +2284,7 @@ async function checkApiAvailability() {
       if (hasNativeSamplingMode) {
         text.innerHTML = `● <strong>LanguageModel Ready</strong> (Native <code>samplingMode</code> Presets Supported)`;
       } else {
-        text.innerHTML = `● <strong>LanguageModel Ready</strong> (Active via Base Parameters: <code>temperature</code> &amp; <code>topK</code>)`;
+        text.innerHTML = `● <strong>LanguageModel Ready</strong> (On-Device Gemini Nano Connected)`;
       }
     } else if (availability === "after-download" || availability === "downloadable") {
       dot.className = "status-dot yellow";
@@ -2306,11 +2315,11 @@ function renderSpectrum() {
       <div class="preset-name" style="color: ${p.color}; font-size: 0.78rem; margin-bottom: 2px;" title="${p.name}">${p.name}</div>
       <div class="preset-meta">
         <div style="display:flex; justify-content:space-between; align-items:center;">
-          <div><span class="param-pill">T: ${p.temp.toFixed(2)}</span> <span class="param-pill">topK: ${p.topK}</span></div>
+          <span class="param-pill" style="color: ${p.color}; font-weight: 500;">${p.semantic}</span>
           <button class="card-code-btn" onclick="openCodeModal('${p.id}'); event.stopPropagation();" title="Inspect JavaScript Code" style="padding: 2px 6px; font-size: 0.68rem; line-height: 1;">💻 JS</button>
         </div>
         <div class="temp-bar-bg">
-          <div class="temp-bar-fill" style="width: ${(p.temp / 1.2) * 100}%; background: ${p.color};"></div>
+          <div class="temp-bar-fill" style="width: ${((PRESETS.indexOf(p) + 1) / PRESETS.length) * 100}%; background: ${p.color};"></div>
         </div>
         <div style="margin-top: 4px; font-size: 0.72rem; line-height: 1.3; color: var(--text-muted);">${p.desc}</div>
       </div>
@@ -2352,8 +2361,8 @@ function renderSpectrum() {
     row.style.borderBottom = "1px solid var(--border-color)";
     row.innerHTML = `
       <td style="padding: 10px 12px; font-family: var(--font-mono); color: ${p.color}; font-weight: 600;">"${p.name}"</td>
-      <td style="padding: 10px 12px; font-family: var(--font-mono);">${p.temp.toFixed(2)}</td>
-      <td style="padding: 10px 12px; font-family: var(--font-mono);">${p.topK}</td>
+      <td style="padding: 10px 12px; font-weight: 500;">${p.semantic}</td>
+      <td style="padding: 10px 12px; color: var(--text-muted);">${p.desc}</td>
       <td style="padding: 10px 12px;">${p.useCase}</td>
     `;
     tableBody.appendChild(row);
@@ -2590,7 +2599,7 @@ function updateMetricsTab() {
     modeCard.innerHTML = `
       <div class="mode-stat-header">
         <span class="mode-stat-name" style="color: ${p.color};">${p.name}</span>
-        <span class="sample-badge">N = ${samples.length}</span>
+        <span class="sample-badge" style="color: ${p.color}; font-weight: 500;">${p.semantic}</span>
       </div>
       <div class="mode-stat-row">
         <span>Median Latency:</span>
@@ -2619,7 +2628,7 @@ function updateMetricsTab() {
     const row = document.createElement("tr");
     row.innerHTML = `
       <td style="color: ${p.color}; font-weight: 600;">"${presetId}"</td>
-      <td>T:${p.temp} | K:${p.topK}</td>
+      <td><span class="sample-badge" style="color: ${p.color}; font-weight: 500;">${p.semantic}</span></td>
       <td><span class="sample-badge">N = ${samples.length}</span></td>
       <td>
         <strong>${latStats.median.toFixed(2)}s</strong>
@@ -2711,7 +2720,7 @@ function updateLiveDisplay(card, text, isFinished, p, startTime) {
   if (isFinished) {
     card.body.textContent = text;
     const entropy = calculateShannonEntropy(text);
-    card.stats.textContent = `T:${p.temp} K:${p.topK} | ~${words} tok | H:${entropy.toFixed(2)}b (${elapsed}s)`;
+    card.stats.textContent = `~${words} words | H: ${entropy.toFixed(2)} bits/word (${elapsed}s)`;
   } else {
     card.body.innerHTML = '';
     const textNode = document.createTextNode(text);
@@ -2874,7 +2883,7 @@ async function runBenchmark() {
           <span>${p.name}</span>
         </div>
         <div style="display:flex; align-items:center; gap:8px;">
-          <div class="result-card-stats" id="stats-${presetId}">T: ${p.temp} | topK: ${p.topK}</div>
+          <div class="result-card-stats" id="stats-${presetId}">Ready</div>
           <button class="card-code-btn" onclick="openCodeModal('${presetId}'); event.stopPropagation();" title="Inspect & Copy JavaScript Code for this preset">💻 JS Code</button>
         </div>
       </div>
