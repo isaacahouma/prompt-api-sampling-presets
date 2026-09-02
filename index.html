@@ -2324,10 +2324,10 @@ async function detectBrowserVersion() {
     pill.style.display = "inline-flex";
     const major = parseInt(fullVersion.split('.')[0], 10) || 0;
     const isBaseline = major < 154;
-    pill.innerHTML = `🌐 <strong>${brandName} ${fullVersion}</strong> <span style="font-weight:normal; color:var(--text-muted); margin-left:4px;">(${isBaseline ? 'M151 Baseline' : 'M154+ Full Spectrum'})</span>`;
+    pill.innerHTML = `🌐 <strong>${brandName} version ${fullVersion}</strong>`;
     pill.title = isBaseline 
-      ? `Active browser is ${brandName} ${fullVersion} (Supports 5 baseline presets. Presets 'slightly-predictable' & 'slightly-creative' require Chrome 154+ / CL 8119572).`
-      : `Active browser is ${brandName} ${fullVersion} (Supports all 7 presets).`;
+      ? `Active browser is ${brandName} version ${fullVersion} (Supports 5 baseline presets. Presets 'slightly-predictable' & 'slightly-creative' require Chrome 154+ / CL 8119572).`
+      : `Active browser is ${brandName} version ${fullVersion} (Supports all 7 presets).`;
   } else {
     pill.style.display = "inline-flex";
     pill.innerHTML = `🌐 <strong>Browser: Non-Chromium</strong>`;
@@ -2381,16 +2381,7 @@ async function checkApiAvailability() {
         updateVarianceSelect();
       }
 
-      const verLabel = fullVersion ? ` on Chrome ${fullVersion}` : "";
-      if (supportedModes.length >= 7) {
-        text.innerHTML = `● <strong>LanguageModel Ready</strong> (All 7 Presets Supported${verLabel})`;
-      } else if (supportedModes.length >= 5) {
-        text.innerHTML = `● <strong>LanguageModel Ready</strong> (5 Baseline Presets Supported${verLabel})`;
-      } else if (supportedModes.length > 0) {
-        text.innerHTML = `● <strong>LanguageModel Ready</strong> (${supportedModes.length} Presets Supported${verLabel})`;
-      } else {
-        text.innerHTML = `● <strong>LanguageModel Ready</strong> (On-Device Gemini Nano Connected${verLabel})`;
-      }
+      text.innerHTML = `● <strong>LanguageModel Ready</strong>`;
     } else if (availability === "after-download" || availability === "downloadable") {
       dot.className = "status-dot yellow";
       text.innerHTML = `⏳ <strong>Gemini Nano Downloading...</strong> (Check status in <code>chrome://components</code>)`;
