@@ -1205,9 +1205,6 @@
       <button class="theme-toggle-btn" id="theme-toggle-btn" title="Toggle Light/Dark Theme">
         <span id="theme-icon">☀️</span> <span id="theme-text">Light Mode</span>
       </button>
-      <a href="https://crbug.com/502214118" target="_blank" class="badge-link" title="Chromium Issue Tracker: Prompt API Sampling Mode Presets">
-        🐞 crbug/502214118
-      </a>
       <a href="https://github.com/webmachinelearning/prompt-api/issues/203" target="_blank" class="badge-link">
         <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
         Spec Issue #203
@@ -1315,7 +1312,10 @@
       </div>
 
       <div class="field-group">
-        <label>Curated Samples (Public &amp; Spec Aligned)</label>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+          <label style="margin-bottom: 0;">Curated Samples (Public &amp; Spec Aligned)</label>
+          <span id="schema-active-badge" class="sample-badge" style="display: none; background: rgba(88, 166, 255, 0.15); color: var(--accent-blue); border: 1px solid rgba(88, 166, 255, 0.3);">🧩 JSON Schema Constraint</span>
+        </div>
         <select id="sample-prompt-selector">
           <optgroup label="Deterministic &amp; Structured (Best for most-predictable / predictable)">
             <option value="json_schema">📊 Flight Itinerary Schema Extraction (Deterministic)</option>
@@ -1379,11 +1379,10 @@
     <!-- Right Results Area -->
     <div class="results-area">
       <div class="tabs">
-        <div class="tab active" data-tab="stream">Live Multi-Output Grid</div>
-        <div class="tab" data-tab="variance">Multi-Run Repeatability &amp; Variance</div>
-        <div class="tab" data-tab="metrics">Mode-Level Latency &amp; Token Distributions</div>
-        <div class="tab" data-tab="code">JavaScript API Code</div>
-        <div class="tab" data-tab="spec">Parameters Reference</div>
+        <div class="tab active" data-tab="stream">⚡ Live Playground</div>
+        <div class="tab" data-tab="variance">🎯 Multi-Run Determinism</div>
+        <div class="tab" data-tab="metrics">📊 Vocabulary &amp; Diversity</div>
+        <div class="tab" data-tab="spec">📋 Spec &amp; Code Reference</div>
       </div>
 
       <!-- Tab 1: Live Grid -->
@@ -1437,18 +1436,22 @@
           </div>
 
           <!-- Variance Stats Banner -->
-          <div class="metrics-summary-grid" id="variance-metrics-boxes" style="display: none;">
+          <div class="metrics-summary-grid" id="variance-metrics-boxes" style="display: none; grid-template-columns: repeat(4, 1fr);">
             <div class="metric-stat-box">
               <span class="title">Selected Preset</span>
-              <span class="value" id="var-stat-preset" style="font-size: 1.1rem;">-</span>
+              <span class="value" id="var-stat-preset" style="font-size: 1.05rem;">-</span>
             </div>
             <div class="metric-stat-box">
-              <span class="title">Determinism / Identity Match</span>
+              <span class="title">Exact-Match Determinism</span>
               <span class="value" id="var-stat-determinism">-%</span>
             </div>
             <div class="metric-stat-box">
-              <span class="title">Unique Variations Produced</span>
+              <span class="title">Unique Variations</span>
               <span class="value" id="var-stat-unique">0</span>
+            </div>
+            <div class="metric-stat-box">
+              <span class="title">Total Unique Vocabulary (|V|)</span>
+              <span class="value" id="var-stat-vocab">0 words</span>
             </div>
           </div>
 
@@ -1461,14 +1464,14 @@
         </div>
       </div>
 
-      <!-- Tab 3: Mode-Level Latency & Token Distributions -->
+      <!-- Tab 3: Empirical Vocabulary & Lexical Diversity -->
       <div id="tab-content-metrics" style="display: none;">
         <div class="metrics-container">
           <div class="metrics-header-bar">
             <div>
-              <strong style="color: var(--text-main);">📊 Mode-Level Statistical Profiles</strong>
-              <div style="font-size: 0.78rem; color: var(--text-muted);">
-                Performance metrics computed independently per sampling mode across all executed runs.
+              <strong style="color: var(--text-main); font-size: 1rem;">📊 Empirical Vocabulary &amp; Lexical Diversity</strong>
+              <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">
+                Demonstrates how sampling modes expand the explored vocabulary space: greedy decoding stays tightly clustered around high-probability tokens, while creative modes sample deeper into the vocabulary tail.
               </div>
             </div>
             <button class="btn-secondary" id="reset-metrics-btn" style="padding: 5px 12px; font-size: 0.78rem;">
@@ -1485,19 +1488,18 @@
                   <line x1="12" y1="20" x2="12" y2="4"></line>
                   <line x1="6" y1="20" x2="6" y2="14"></line>
                 </svg>
-                <span>Comparative Mode Bar Chart</span>
+                <span id="bar-chart-main-title">Unique Vocabulary Size (|V|) by Preset</span>
               </div>
               <div class="metric-toggle-pills" id="bar-chart-metric-selector">
-                <button class="metric-pill-btn active" data-metric="latency">⏱️ Median Latency (s)</button>
-                <button class="metric-pill-btn" data-metric="tokens">📊 Token Count</button>
-                <button class="metric-pill-btn" data-metric="throughput">⚡ Throughput (tok/s)</button>
-                <button class="metric-pill-btn" data-metric="entropy">🔥 Entropy (%)</button>
+                <button class="metric-pill-btn active" data-metric="vocab">📖 Unique Vocabulary (|V|)</button>
+                <button class="metric-pill-btn" data-metric="diversity">📈 Lexical Diversity (TTR %)</button>
+                <button class="metric-pill-btn" data-metric="totalWords">🔤 Total Word Count (N)</button>
               </div>
             </div>
 
             <div class="bar-chart-svg-container" id="svg-bar-chart-wrapper">
               <div style="color: var(--text-muted); font-size: 0.85rem; text-align: center; padding-top: 90px;">
-                Run a comparison to generate the comparative bar chart across modes.
+                Run a comparison or repeatability test to generate comparative vocabulary distributions.
               </div>
             </div>
           </div>
@@ -1505,167 +1507,132 @@
           <!-- Individual Mode Cards Grid -->
           <div class="mode-summary-grid" id="mode-stat-cards-container">
             <div style="color: var(--text-muted); font-size: 0.85rem; padding: 24px; text-align: center; border: 1px dashed var(--border-color); border-radius: 8px; grid-column: 1 / -1;">
-              Run a comparison to view mode-specific performance profiles (Median Latency, Tokens, Throughput).
-            </div>
-          </div>
-
-          <!-- Visual Bar Charts & Distribution Box-Plots -->
-          <div class="charts-grid">
-            <!-- Chart 1: Latency Distribution with Median Indicator -->
-            <div class="chart-card">
-              <div class="chart-card-title">
-                <span>⏱️ Mode Latency Distribution [Min &mdash; Median &mdash; Max]</span>
-                <span style="font-size: 0.75rem; color: var(--text-muted);">Band = Observed Range, Line = Median</span>
-              </div>
-              <div class="chart-body" id="chart-latency-body">
-                <div style="color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 20px;">Run comparison to plot latency distribution</div>
-              </div>
-            </div>
-
-            <!-- Chart 2: Output Token Distribution Histogram -->
-            <div class="chart-card">
-              <div class="chart-card-title">
-                <span>📊 Mode Output Length (Median Token Count)</span>
-                <span style="font-size: 0.75rem; color: var(--text-muted);">Observed token count per mode</span>
-              </div>
-              <div class="chart-body" id="chart-tokens-body">
-                <div style="color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 20px;">Run comparison to plot token histogram</div>
-              </div>
-            </div>
-
-            <!-- Chart 3: Throughput Speed Histogram -->
-            <div class="chart-card">
-              <div class="chart-card-title">
-                <span>⚡ Mode Streaming Throughput</span>
-                <span style="font-size: 0.75rem; color: var(--text-muted);">Tokens / second</span>
-              </div>
-              <div class="chart-body" id="chart-throughput-body">
-                <div style="color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 20px;">Run comparison to plot throughput distribution</div>
-              </div>
-            </div>
-
-            <!-- Chart 4: Empirical Shannon Entropy Distribution -->
-            <div class="chart-card">
-              <div class="chart-card-title">
-                <span>🔥 Mode Empirical Entropy (H) [Min &mdash; Median &mdash; Max]</span>
-                <span style="font-size: 0.75rem; color: var(--text-muted);">Observed bits / word (Band = Range, Line = Median)</span>
-              </div>
-              <div class="chart-body" id="chart-entropy-body">
-                <div style="color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 20px;">Run comparison to plot entropy distribution</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Plain-English Theory & Explainer Callout Card -->
-          <div class="entropy-theory-card">
-            <div class="entropy-theory-title">
-              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-              How Empirical Shannon Lexical Entropy is Computed on Output Data
-            </div>
-            <p style="font-size: 0.86rem; color: var(--text-main);">
-              In information theory, <strong>Empirical Shannon Entropy <em>H</em></strong> quantifies the <em>unpredictability, vocabulary richness, and information density</em> of the text generated by the model:
-            </p>
-
-            <div class="plain-math-box">
-              <div class="plain-math-item">
-                <strong>1. Empirical Shannon Lexical Entropy:</strong>
-                <span>Calculated directly from the observed word probability distribution in the model's generated output:</span>
-                <div>
-                  <span class="plain-math-formula">H(text) = &minus;&sum; p(w<sub>i</sub>) &times; log<sub>2</sub> p(w<sub>i</sub>) &nbsp;(bits / word)</span>
-                </div>
-              </div>
-
-              <div class="plain-math-item">
-                <strong>2. Monotonic Scaling Across Presets:</strong>
-                <span>As presets transition along the semantic spectrum from <code>most-predictable</code> to <code>most-creative</code>, the probability mass shifts from greedy single-path selection to broader exploration across the vocabulary tail, elevating observed empirical lexical entropy.</span>
-              </div>
-            </div>
-
-            <div style="font-size: 0.82rem; color: var(--text-muted); display: flex; gap: 16px; flex-wrap: wrap; margin-top: 4px;">
-              <span>📖 Further Reading:</span>
-              <a href="https://en.wikipedia.org/wiki/Entropy_(information_theory)" target="_blank" style="color: var(--accent-blue); text-decoration: none;">Wikipedia: Shannon Entropy &rarr;</a>
-              <a href="https://github.com/webmachinelearning/prompt-api/issues/203" target="_blank" style="color: var(--accent-blue); text-decoration: none;">W3C Prompt API Spec Issue #203 &rarr;</a>
-              <a href="https://github.com/webmachinelearning/prompt-api" target="_blank" style="color: var(--accent-blue); text-decoration: none;">Prompt API Explainer &rarr;</a>
+              Run a comparison to view mode-specific vocabulary statistics and diversity ratios.
             </div>
           </div>
 
           <!-- Data Breakdown Table with Cumulative Stats & Sample Counts -->
-          <table class="metrics-table">
+          <table class="metrics-table" style="margin-top: 20px;">
             <thead>
               <tr>
                 <th>Sampling Preset</th>
                 <th>Semantic Profile</th>
-                <th>Samples ($N$)</th>
-                <th>Median Latency [Min &mdash; Max]</th>
-                <th>Median Tokens</th>
-                <th>Throughput</th>
-                <th>Empirical Entropy (H)</th>
+                <th>Samples (N)</th>
+                <th>Total Words (N)</th>
+                <th>Unique Vocabulary (|V|)</th>
+                <th>Lexical Diversity (TTR %)</th>
+                <th>Behavioral Contract</th>
               </tr>
             </thead>
             <tbody id="metrics-table-body">
               <tr>
                 <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 24px;">
-                  Run a comparison to generate performance metrics across presets.
+                  Run a comparison to generate vocabulary metrics across presets.
                 </td>
               </tr>
             </tbody>
           </table>
-        </div>
-      </div>
 
-      <!-- Tab 4: Interactive JavaScript API Snippet Generator -->
-      <div id="tab-content-code" style="display: none;">
-        <div style="margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-          <div>
-            <strong style="color: var(--text-main); font-size: 0.95rem;">💻 Interactive JavaScript Snippet Generator</strong>
-            <div style="font-size: 0.8rem; color: var(--text-muted);">
-              Generates self-contained, copy-pasteable JavaScript code ready to run directly in your <strong>DevTools Console</strong> or web app.
+          <!-- Theory & Explainer Callout Card -->
+          <div class="entropy-theory-card" style="margin-top: 20px;">
+            <div class="entropy-theory-title">
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+              Understanding Vocabulary Size &amp; Lexical Diversity in Sampling Modes
+            </div>
+            <p style="font-size: 0.86rem; color: var(--text-main); margin-bottom: 12px;">
+              In natural language generation, <strong>Lexical Diversity (Type-Token Ratio: $	ext{TTR} = rac{|V|}{N}$)</strong> measures the richness and variety of vocabulary produced by a model:
+            </p>
+
+            <div class="plain-math-box">
+              <div class="plain-math-item">
+                <strong>1. Greedy Boundedness on <code>most-predictable</code>:</strong>
+                <span>Under deterministic decoding, the model always selects the highest-probability path ($p(w)$ argmax). This minimizes vocabulary expansion, producing tight, reproducible text indispensable for code synthesis, JSON extraction, and regression testing.</span>
+              </div>
+
+              <div class="plain-math-item">
+                <strong>2. Tail Sampling &amp; Lexical Expansion on Creative Modes:</strong>
+                <span>As presets transition toward <code>creative</code> and <code>most-creative</code>, sampling flattens token likelihoods, enabling the model to explore alternate vocabulary paths. This yields a monotonically higher distinct word count ($|V|$) and higher Lexical Diversity ($	ext{TTR}$).</span>
+              </div>
+            </div>
+
+            <div style="font-size: 0.82rem; color: var(--text-muted); display: flex; gap: 16px; flex-wrap: wrap; margin-top: 10px;">
+              <span>📖 Reference Links:</span>
+              <a href="https://github.com/webmachinelearning/prompt-api/issues/203" target="_blank" style="color: var(--accent-blue); text-decoration: none;">W3C Prompt API Spec Issue #203 &rarr;</a>
+              <a href="https://github.com/webmachinelearning/prompt-api" target="_blank" style="color: var(--accent-blue); text-decoration: none;">W3C Prompt API Explainer &rarr;</a>
             </div>
           </div>
-          <div style="display: flex; gap: 10px; align-items: center;">
-            <label style="font-size: 0.82rem; color: var(--text-muted); font-weight: 600;">Sampling Mode:</label>
-            <select class="control-select" id="code-tab-preset-select" style="width: auto; padding: 4px 10px; font-size: 0.82rem;">
-              <option value="most-predictable">most-predictable — Fully Deterministic (Greedy)</option>
-              <option value="predictable">predictable — Very Low Variance</option>
-              <option value="slightly-predictable">slightly-predictable — Controlled Coherence</option>
-              <option value="balanced" selected>balanced — Moderate Variance (Default)</option>
-              <option value="slightly-creative">slightly-creative — Expressive Variety</option>
-              <option value="creative">creative — High Divergence</option>
-              <option value="most-creative">most-creative — Maximum Novelty</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="code-container">
-          <div class="code-toolbar">
-            <span class="code-lang-tag">JavaScript / Chromium Prompt API</span>
-            <button class="copy-btn" id="copy-code-btn" onclick="copySnippetCode()">📋 Copy Snippet</button>
-          </div>
-          <div class="code-box" id="code-snippet-box"></div>
-        </div>
-
-        <div style="margin-top: 12px; font-size:0.8rem; color:var(--text-muted); line-height: 1.5; background:var(--bg-secondary); padding:10px 14px; border-radius:6px; border:1px solid var(--border-color);">
-          💡 <strong>How to run:</strong> Open DevTools (<kbd style="background:var(--bg-card); padding:2px 5px; border-radius:3px;">F12</kbd> or <kbd style="background:var(--bg-card); padding:2px 5px; border-radius:3px;">Cmd+Option+I</kbd>), paste this code into the <strong>Console</strong>, and press <kbd style="background:var(--bg-card); padding:2px 5px; border-radius:3px;">Enter</kbd>.
         </div>
       </div>
 
-      <!-- Tab 5: Spec Reference -->
+      <!-- Tab 4: Normative Spec & JavaScript Code Reference -->
       <div id="tab-content-spec" style="display: none;">
-        <table style="width: 100%; border-collapse: collapse; background: var(--bg-secondary); border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color); font-size: 0.85rem; color: var(--text-main);">
-          <thead>
-            <tr style="background: var(--bg-card); text-align: left; border-bottom: 1px solid var(--border-color);">
-              <th style="padding: 10px 12px; color: var(--text-muted);">Preset ID</th>
-              <th style="padding: 10px 12px; color: var(--text-muted);">Semantic Profile</th>
-              <th style="padding: 10px 12px; color: var(--text-muted);">Behavioral Contract</th>
-              <th style="padding: 10px 12px; color: var(--text-muted);">Target Workloads</th>
-            </tr>
-          </thead>
-          <tbody id="spec-table-body">
-            <!-- Injected via JS -->
-          </tbody>
-        </table>
-        <div style="margin-top: 14px; padding: 12px 16px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.8rem; color: var(--text-muted); line-height: 1.5;">
-          <strong>💡 Hyperparameter Abstraction:</strong> Under the W3C Prompt API proposal (<a href="https://github.com/webmachinelearning/prompt-api/issues/203" target="_blank" style="color: var(--accent-blue);">Issue #203</a>), <code>samplingMode</code> abstracts away model-specific hyperparameters (such as temperature, top-k, and top-p). This establishes a durable semantic contract across diverse hardware architectures and model weights without requiring web developers to tune internal hyperparameters.
+        <div style="display: flex; flex-direction: column; gap: 24px;">
+
+          <!-- Section 1: Normative Spec Table -->
+          <div>
+            <div style="margin-bottom: 12px;">
+              <strong style="color: var(--text-main); font-size: 1rem;">📋 Normative WebIDL Specification &amp; Presets</strong>
+              <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">
+                Categorical sampling modes proposed in <a href="https://github.com/webmachinelearning/prompt-api/issues/203" target="_blank" style="color: var(--accent-blue);">W3C WebML Prompt API Issue #203</a>.
+              </div>
+            </div>
+
+            <table style="width: 100%; border-collapse: collapse; background: var(--bg-secondary); border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color); font-size: 0.85rem; color: var(--text-main);">
+              <thead>
+                <tr style="background: var(--bg-card); text-align: left; border-bottom: 1px solid var(--border-color);">
+                  <th style="padding: 10px 12px; color: var(--text-muted);">Preset ID</th>
+                  <th style="padding: 10px 12px; color: var(--text-muted);">Semantic Profile</th>
+                  <th style="padding: 10px 12px; color: var(--text-muted);">Behavioral Contract</th>
+                  <th style="padding: 10px 12px; color: var(--text-muted);">Target Workloads</th>
+                  <th style="padding: 10px 12px; color: var(--text-muted); text-align: center;">Action</th>
+                </tr>
+              </thead>
+              <tbody id="spec-table-body">
+                <!-- Injected via JS -->
+              </tbody>
+            </table>
+
+            <div style="margin-top: 14px; padding: 12px 16px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.8rem; color: var(--text-muted); line-height: 1.5;">
+              <strong>💡 Hyperparameter Abstraction:</strong> Under the W3C Prompt API specification, <code>samplingMode</code> deliberately abstracts away model-specific hyperparameters (such as temperature, top-k, and top-p). Web applications code to durable semantic contracts, while the browser and on-device execution engine map each preset to the optimal decoding configuration for the active model architecture.
+            </div>
+          </div>
+
+          <!-- Section 2: Interactive JavaScript API Snippet Generator -->
+          <div style="border-top: 1px solid var(--border-color); padding-top: 20px;">
+            <div style="margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+              <div>
+                <strong style="color: var(--text-main); font-size: 0.95rem;">💻 Canonical JavaScript Execution Snippet</strong>
+                <div style="font-size: 0.8rem; color: var(--text-muted);">
+                  Ready to copy and execute directly in your <strong>Chrome DevTools Console</strong> or web application.
+                </div>
+              </div>
+              <div style="display: flex; gap: 10px; align-items: center;">
+                <label style="font-size: 0.82rem; color: var(--text-muted); font-weight: 600;">Sampling Mode:</label>
+                <select class="control-select" id="code-tab-preset-select" style="width: auto; padding: 4px 10px; font-size: 0.82rem;">
+                  <option value="most-predictable">most-predictable — Fully Deterministic (Greedy)</option>
+                  <option value="predictable">predictable — Very Low Variance</option>
+                  <option value="slightly-predictable">slightly-predictable — Controlled Coherence</option>
+                  <option value="balanced" selected>balanced — Moderate Variance (Default)</option>
+                  <option value="slightly-creative">slightly-creative — Expressive Variety</option>
+                  <option value="creative">creative — High Divergence</option>
+                  <option value="most-creative">most-creative — Maximum Novelty</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="code-container" style="margin: 0;">
+              <div class="code-toolbar">
+                <span class="code-lang-tag">JavaScript / Chromium Prompt API</span>
+                <button class="copy-btn" id="copy-code-btn" onclick="copySnippetCode()">📋 Copy Snippet</button>
+              </div>
+              <div class="code-box" id="code-snippet-box"></div>
+            </div>
+
+            <div style="margin-top: 12px; font-size:0.8rem; color:var(--text-muted); line-height: 1.5; background:var(--bg-secondary); padding:10px 14px; border-radius:6px; border:1px solid var(--border-color);">
+              💡 <strong>How to run:</strong> Open DevTools (<kbd style="background:var(--bg-card); padding:2px 5px; border-radius:3px;">F12</kbd> or <kbd style="background:var(--bg-card); padding:2px 5px; border-radius:3px;">Cmd+Option+I</kbd>), paste this snippet into the <strong>Console</strong>, and press <kbd style="background:var(--bg-card); padding:2px 5px; border-radius:3px;">Enter</kbd>.
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
@@ -1703,6 +1670,20 @@
 </div>
 
 <script>
+// Strict JSON Schema for Constrained Decoding demonstration (W3C Prompt API & Chromium Blink)
+const FLIGHT_SCHEMA = {
+  type: "object",
+  properties: {
+    flight: { type: "string", description: "Flight designator code (e.g. UA 482)" },
+    origin: { type: "string", description: "Departure city and IATA code" },
+    destination: { type: "string", description: "Arrival city and IATA code" },
+    status: { type: "string", enum: ["ON TIME", "DELAYED", "CANCELLED"] },
+    gate: { type: "string", description: "Boarding or departure gate" },
+    priceUsd: { type: "number", description: "Ticket fare in USD" }
+  },
+  required: ["flight", "origin", "destination", "status", "gate", "priceUsd"]
+};
+
 const PRESETS = [
   {
     id: "most-predictable",
@@ -1711,6 +1692,7 @@ const PRESETS = [
     temp: 0.0,
     topK: 1,
     color: "#3fb950",
+    tier: "M151+ Baseline",
     desc: "Strict greedy decoding. Guarantees 100% identical outputs across runs.",
     useCase: "Code generation, strict JSON/schema extraction, math proofs, fact checking."
   },
@@ -1721,6 +1703,7 @@ const PRESETS = [
     temp: 0.3,
     topK: 32,
     color: "#58a6ff",
+    tier: "M151+ Baseline",
     desc: "High factual grounding and tight coherence with minimal lexical drift.",
     useCase: "Translation, structured summaries, entity extraction, data formatting."
   },
@@ -1731,6 +1714,8 @@ const PRESETS = [
     temp: 0.7,
     topK: 64,
     color: "#79c0ff",
+    tier: "M154+ Expansion",
+    fallbackMode: "predictable",
     desc: "Structural precision with moderate stylistic flexibility.",
     useCase: "Technical documentation, essays, explainers, reports."
   },
@@ -1741,6 +1726,7 @@ const PRESETS = [
     temp: 1.0,
     topK: 64,
     color: "#d29922",
+    tier: "M151+ Baseline",
     desc: "Standard general-purpose distribution for everyday conversational tasks.",
     useCase: "General conversation, multi-turn Q&A, versatile everyday tasks."
   },
@@ -1751,6 +1737,8 @@ const PRESETS = [
     temp: 1.1,
     topK: 72,
     color: "#f0883e",
+    tier: "M154+ Expansion",
+    fallbackMode: "creative",
     desc: "Richer vocabulary and expressive prose for engaging copywriting.",
     useCase: "Blog posts, creative copy, conversational dialogues."
   },
@@ -1761,6 +1749,7 @@ const PRESETS = [
     temp: 1.15,
     topK: 80,
     color: "#bc8cff",
+    tier: "M151+ Baseline",
     desc: "High narrative divergence and imaginative multi-path generation.",
     useCase: "Fiction, storytelling, worldbuilding, brainstorming."
   },
@@ -1771,6 +1760,7 @@ const PRESETS = [
     temp: 1.2,
     topK: 100,
     color: "#f85149",
+    tier: "M151+ Baseline",
     desc: "Maximum entropy sampling across the broadest vocabulary tail.",
     useCase: "Poetry, surreal metaphors, unconventional concept ideation."
   }
@@ -1823,7 +1813,7 @@ const SAMPLE_PROMPTS = {
 // Global State with Cumulative Multi-Run Samples
 let selectedPresets = ["most-predictable", "predictable", "slightly-predictable", "balanced", "slightly-creative", "creative", "most-creative"];
 let cumulativeBenchmarkHistory = {}; // Key: presetId -> Array of samples: [{ latency, tokens, throughput }]
-let activeBarChartMetric = "latency"; // "latency", "tokens", "throughput", "entropy"
+let activeBarChartMetric = "vocab"; // "latency", "tokens", "throughput", "entropy"
 
 // Helper to strictly sort presets according to canonical temperature spectrum
 function getSortedActivePresets(presetIds) {
@@ -1874,6 +1864,20 @@ function sanitizePlainText(text) {
 }
 
 // Math distribution helpers
+// Empirical Lexical Analysis Helper: Vocabulary Size (|V|), Total Words (N), and Lexical Diversity (TTR %)
+function getVocabularyStats(textArray) {
+  let totalWords = 0;
+  const wordSet = new Set();
+  (textArray || []).forEach(txt => {
+    const tokens = (txt || "").toLowerCase().match(/\b[a-z0-9_-]+\b/g) || [];
+    totalWords += tokens.length;
+    tokens.forEach(w => wordSet.add(w));
+  });
+  const uniqueWords = wordSet.size;
+  const ttr = totalWords > 0 ? ((uniqueWords / totalWords) * 100).toFixed(1) : "0.0";
+  return { totalWords, uniqueWords, ttr };
+}
+
 function calculateStats(numbers) {
   if (!numbers || numbers.length === 0) return { min: 0, max: 0, median: 0, mean: 0, count: 0 };
   const sorted = [...numbers].sort((a, b) => a - b);
@@ -1925,8 +1929,37 @@ function generateRunnableSnippet(presetId, userPrompt, systemPrompt, isStreaming
 
   const sysSnippet = safeSys ? `,\n  initialPrompts: [\n    { role: "system", content: "${safeSys}" }\n  ]` : "";
 
+  const isJsonPrompt = (document.getElementById("sample-prompt-selector")?.value === "json_schema") ||
+                       uPrompt.toLowerCase().includes("flight") ||
+                       uPrompt.toLowerCase().includes("json");
+
+  let schemaBlock = "";
+  let promptCall = `session.promptStreaming("${safeUser}")`;
+  let nonStreamCall = `await session.prompt("${safeUser}")`;
+
+  if (isJsonPrompt) {
+    schemaBlock = `\n// 3. Optional: Define JSON responseConstraint schema for structured extraction
+const flightSchema = {
+  type: "object",
+  properties: {
+    flight: { type: "string" },
+    origin: { type: "string" },
+    destination: { type: "string" },
+    status: { type: "string", enum: ["ON TIME", "DELAYED", "CANCELLED"] },
+    gate: { type: "string" },
+    priceUsd: { type: "number" }
+  },
+  required: ["flight", "origin", "destination", "status", "gate", "priceUsd"]
+};\n`;
+    promptCall = `session.promptStreaming("${safeUser}", { responseConstraint: flightSchema })`;
+    nonStreamCall = `await session.prompt("${safeUser}", { responseConstraint: flightSchema })`;
+  }
+
+  const isExpanded = p.tier === "M154+ Expansion";
+  let versionNote = isExpanded ? `// NOTE: "${presetId}" requires Chrome 154+ (CL 8119572: 7-preset spectrum expansion).\n// In Chrome 151-153 baseline builds, WebIDL will throw a TypeError for this enum value.\n` : "";
+
   if (isStreaming) {
-    return `// 1. Check model availability for "${presetId}" preset
+    return `${versionNote}// 1. Check model availability for "${presetId}" preset
 const availability = await LanguageModel.availability({
   samplingMode: "${presetId}"
 });
@@ -1937,10 +1970,9 @@ const session = await LanguageModel.create({
   samplingMode: "${presetId}"${sysSnippet}
 });
 
-console.log("Active Preset:", session.samplingMode);
-
-// 3. Stream response tokens in Console
-const stream = session.promptStreaming("${safeUser}");
+console.log("Active Preset:", session.samplingMode);${schemaBlock}
+// ${isJsonPrompt ? '4' : '3'}. Stream response tokens in Console
+const stream = ${promptCall};
 let fullResponse = "";
 
 for await (const chunk of stream) {
@@ -1949,7 +1981,7 @@ for await (const chunk of stream) {
 
 console.log("\\n=== Response (${presetId}) ===\\n" + fullResponse);`;
   } else {
-    return `// 1. Check model availability for "${presetId}" preset
+    return `${versionNote}// 1. Check model availability for "${presetId}" preset
 const availability = await LanguageModel.availability({
   samplingMode: "${presetId}"
 });
@@ -1960,51 +1992,10 @@ const session = await LanguageModel.create({
   samplingMode: "${presetId}"${sysSnippet}
 });
 
-console.log("Active Preset:", session.samplingMode);
-
-// 3. Generate atomic response
-const response = await session.prompt("${safeUser}");
+console.log("Active Preset:", session.samplingMode);${schemaBlock}
+// ${isJsonPrompt ? '4' : '3'}. Generate atomic response
+const response = ${nonStreamCall};
 console.log("\\n=== Response (${presetId}) ===\\n" + response);`;
-  }
-}
-
-// Active modal code state
-let currentModalCode = "";
-
-// Open interactive Code Inspector Modal for a specific preset
-function openCodeModal(presetId) {
-  const userPrompt = document.getElementById("user-prompt")?.value || "";
-  const systemPrompt = document.getElementById("system-prompt")?.value || "";
-  const isStreaming = document.getElementById("prompt-streaming-toggle")?.checked ?? true;
-  const p = PRESETS.find(x => x.id === presetId) || PRESETS[0];
-
-  currentModalCode = generateRunnableSnippet(presetId, userPrompt, systemPrompt, isStreaming);
-  
-  const box = document.getElementById("modal-code-box");
-  const badge = document.getElementById("modal-preset-badge");
-  const backdrop = document.getElementById("code-modal-backdrop");
-  
-  if (box) box.innerHTML = highlightJsCode(currentModalCode);
-  if (badge) {
-    badge.textContent = `${p.name} (${p.semantic})`;
-    badge.style.color = p.color;
-  }
-  if (backdrop) backdrop.classList.add("show");
-}
-
-function closeCodeModal() {
-  const backdrop = document.getElementById("code-modal-backdrop");
-  if (backdrop) backdrop.classList.remove("show");
-}
-
-function copyModalCode() {
-  if (!currentModalCode) return;
-  navigator.clipboard.writeText(currentModalCode);
-  const btn = document.getElementById("modal-copy-btn");
-  if (btn) {
-    const original = btn.textContent;
-    btn.textContent = "✓ Copied to Clipboard!";
-    setTimeout(() => { btn.textContent = original; }, 2000);
   }
 }
 
@@ -2275,14 +2266,21 @@ async function checkApiAvailability() {
 
     if (availability === "readily" || availability === "available" || availability === "readily-available") {
       dot.className = "status-dot green";
-      let hasNativeSamplingMode = false;
-      try {
-        const availTest = await resolved.obj.availability?.({ samplingMode: "most-predictable" });
-        if (availTest) hasNativeSamplingMode = true;
-      } catch (e) {}
+      const supportedModes = [];
+      for (const p of PRESETS) {
+        try {
+          const availTest = await resolved.obj.availability?.({ samplingMode: p.id });
+          if (availTest && availTest !== "no") supportedModes.push(p.id);
+        } catch (e) {}
+      }
+      window.supportedSamplingModes = new Set(supportedModes);
 
-      if (hasNativeSamplingMode) {
-        text.innerHTML = `● <strong>LanguageModel Ready</strong> (Native <code>samplingMode</code> Presets Supported)`;
+      if (supportedModes.length >= 7) {
+        text.innerHTML = `● <strong>LanguageModel Ready</strong> (Native <code>samplingMode</code>: All 7 Presets Supported)`;
+      } else if (supportedModes.length >= 5) {
+        text.innerHTML = `● <strong>LanguageModel Ready</strong> (Native <code>samplingMode</code>: 5 Baseline Presets Supported, M151-153)`;
+      } else if (supportedModes.length > 0) {
+        text.innerHTML = `● <strong>LanguageModel Ready</strong> (Native <code>samplingMode</code>: ${supportedModes.length} Presets Supported)`;
       } else {
         text.innerHTML = `● <strong>LanguageModel Ready</strong> (On-Device Gemini Nano Connected)`;
       }
@@ -2360,15 +2358,64 @@ function renderSpectrum() {
     const row = document.createElement("tr");
     row.style.borderBottom = "1px solid var(--border-color)";
     row.innerHTML = `
-      <td style="padding: 10px 12px; font-family: var(--font-mono); color: ${p.color}; font-weight: 600;">"${p.name}"</td>
+      <td style="padding: 10px 12px; font-family: var(--font-mono); color: ${p.color}; font-weight: 600; white-space: nowrap;">
+        "${p.name}"
+        ${p.tier === 'M154+ Expansion' ? '<span style="font-size:0.65rem; padding:2px 6px; border-radius:4px; background:rgba(121,192,255,0.15); color:var(--accent-blue); font-weight:600; margin-left:6px; font-family:sans-serif;" title="Added in expanded spectrum (Chrome 154+ / CL 8119572)">M154+ Expansion</span>' : '<span style="font-size:0.65rem; padding:2px 6px; border-radius:4px; background:rgba(255,255,255,0.06); color:var(--text-muted); font-weight:500; margin-left:6px; font-family:sans-serif;" title="Canonical Baseline (Chrome 151+ / CL 7801217)">M151+ Baseline</span>'}
+      </td>
       <td style="padding: 10px 12px; font-weight: 500;">${p.semantic}</td>
       <td style="padding: 10px 12px; color: var(--text-muted);">${p.desc}</td>
       <td style="padding: 10px 12px;">${p.useCase}</td>
+      <td style="padding: 10px 12px; text-align: center;">
+        <button class="btn-secondary" onclick="applyAndTestPreset('${p.id}'); event.stopPropagation();" style="padding: 3px 10px; font-size: 0.72rem; white-space: nowrap; font-weight: 600;" title="Select '${p.name}', load matching prompt, and test in Live Playground">
+          ⚡ Test Preset
+        </button>
+      </td>
     `;
     tableBody.appendChild(row);
   });
 
   renderHighlightedCode();
+}
+
+// 1-Click Interactive Navigation: Select preset, load archetype prompt, switch to Playground
+function applyAndTestPreset(presetId) {
+  selectedPresets = [presetId];
+  selectedPresets = getSortedActivePresets(selectedPresets);
+  renderSpectrum();
+
+  const promptMap = {
+    "most-predictable": "json_schema",
+    "predictable": "sentiment_breakdown",
+    "slightly-predictable": "logic_breakdown",
+    "balanced": "crisis_email",
+    "slightly-creative": "translation_nuance",
+    "creative": "airship_pitch",
+    "most-creative": "poem_3line"
+  };
+
+  const targetPromptKey = promptMap[presetId] || "airship_pitch";
+  const promptSelect = document.getElementById("sample-prompt-selector");
+  if (promptSelect) {
+    promptSelect.value = targetPromptKey;
+    if (SAMPLE_PROMPTS[targetPromptKey]) {
+      document.getElementById("system-prompt").value = SAMPLE_PROMPTS[targetPromptKey].system;
+      document.getElementById("user-prompt").value = SAMPLE_PROMPTS[targetPromptKey].user;
+    }
+    updateSchemaBadge(targetPromptKey);
+  }
+
+  switchTab("stream");
+  const container = document.getElementById("results-cards-container");
+  if (container) {
+    container.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+}
+
+function updateSchemaBadge(promptKey) {
+  const badge = document.getElementById("schema-active-badge");
+  if (badge) {
+    badge.style.display = promptKey === "json_schema" ? "inline-flex" : "none";
+  }
 }
 
 function togglePresetSelection(presetId, forceValue) {
@@ -2391,9 +2438,10 @@ function togglePresetSelection(presetId, forceValue) {
   renderSpectrum();
 }
 
-// Render Interactive SVG Vertical Bar Chart
+// Render Interactive SVG Vertical Bar Chart (Empirical Vocabulary & Diversity)
 function renderSvgBarChart() {
   const wrapper = document.getElementById("svg-bar-chart-wrapper");
+  const mainTitle = document.getElementById("bar-chart-main-title");
   if (!wrapper) return;
 
   const rawKeys = Object.keys(cumulativeBenchmarkHistory);
@@ -2407,7 +2455,7 @@ function renderSvgBarChart() {
   if (totalSampleCount === 0) {
     wrapper.innerHTML = `
       <div style="color: var(--text-muted); font-size: 0.85rem; text-align: center; padding-top: 90px;">
-        Run a comparison to generate the comparative bar chart across modes.
+        Run a comparison or repeatability test to generate the comparative vocabulary distribution.
       </div>
     `;
     return;
@@ -2418,31 +2466,30 @@ function renderSvgBarChart() {
     const samples = cumulativeBenchmarkHistory[presetId] || [];
     if (samples.length === 0) return;
 
-    const p = PRESETS.find(x => x.id === presetId) || { color: '#58a6ff', name: presetId, temp: 1.0, topK: 64 };
-    const latStats = calculateStats(samples.map(s => s.latency));
-    const tokStats = calculateStats(samples.map(s => s.tokens));
-    const thrStats = calculateStats(samples.map(s => s.throughput));
-    const entStats = calculateStats(samples.map(s => s.entropy !== undefined ? s.entropy : calculateShannonEntropy(s.text)));
+    const p = PRESETS.find(x => x.id === presetId) || { color: '#58a6ff', name: presetId, semantic: 'Standard' };
+    const textArray = samples.map(s => s.text);
+    const vStats = getVocabularyStats(textArray);
 
     let val = 0;
     let label = "";
-    if (activeBarChartMetric === "latency") {
-      val = latStats.median;
-      label = `${val.toFixed(2)}s`;
-    } else if (activeBarChartMetric === "tokens") {
-      val = Math.round(tokStats.median);
-      label = `${val} tok`;
-    } else if (activeBarChartMetric === "throughput") {
-      val = thrStats.median;
-      label = `${val.toFixed(1)} tok/s`;
-    } else if (activeBarChartMetric === "entropy") {
-      val = entStats.median;
-      label = `${val.toFixed(2)} bits`;
+    if (activeBarChartMetric === "vocab") {
+      val = vStats.uniqueWords;
+      label = `${val} words`;
+      if (mainTitle) mainTitle.textContent = "Unique Vocabulary Size (|V|) Across Presets";
+    } else if (activeBarChartMetric === "diversity") {
+      val = parseFloat(vStats.ttr);
+      label = `${val.toFixed(1)}%`;
+      if (mainTitle) mainTitle.textContent = "Lexical Diversity (Type-Token Ratio: |V| / N %)";
+    } else if (activeBarChartMetric === "totalWords") {
+      val = vStats.totalWords;
+      label = `${val} words`;
+      if (mainTitle) mainTitle.textContent = "Total Generated Word Volume (N) Across Presets";
     }
 
     chartData.push({
       id: presetId,
       name: p.name,
+      semantic: p.semantic,
       color: p.color,
       value: val,
       displayLabel: label
@@ -2451,58 +2498,52 @@ function renderSvgBarChart() {
 
   if (chartData.length === 0) return;
 
-  const maxVal = Math.max(...chartData.map(d => d.value), 0.01) * 1.18; // 18% headroom for value label
+  const maxVal = Math.max(...chartData.map(d => d.value), 0.01) * 1.2;
   const svgWidth = 880;
   const svgHeight = 240;
-  const paddingLeft = 55;
+  const paddingLeft = 60;
   const paddingRight = 35;
   const paddingTop = 25;
   const paddingBottom = 50;
-
   const chartW = svgWidth - paddingLeft - paddingRight;
   const chartH = svgHeight - paddingTop - paddingBottom;
-  const barSlotW = chartW / chartData.length;
-  const barWidth = Math.min(68, barSlotW * 0.65);
+
+  const barCount = chartData.length;
+  const slotW = chartW / barCount;
+  const barW = Math.min(65, slotW * 0.65);
 
   let gridLinesSvg = "";
   const numGridTicks = 4;
   for (let i = 0; i <= numGridTicks; i++) {
-    const yVal = (maxVal / numGridTicks) * i;
-    const yPos = paddingTop + chartH - (i / numGridTicks) * chartH;
-    let tickText = yVal.toFixed(1);
-    if (activeBarChartMetric === "tokens") {
-      tickText = Math.round(yVal);
-    } else if (activeBarChartMetric === "entropy") {
-      tickText = yVal.toFixed(2);
+    const ratio = i / numGridTicks;
+    const yPos = paddingTop + chartH - (chartH * ratio);
+    const yVal = maxVal * ratio;
+    let tickText = "";
+    if (activeBarChartMetric === "diversity") {
+      tickText = yVal.toFixed(0) + "%";
+    } else {
+      tickText = Math.round(yVal) + " w";
     }
     gridLinesSvg += `
       <line x1="${paddingLeft}" y1="${yPos}" x2="${svgWidth - paddingRight}" y2="${yPos}" stroke="var(--border-color)" stroke-dasharray="3,3" />
-      <text x="${paddingLeft - 10}" y="${yPos + 4}" fill="var(--text-muted)" font-size="10" text-anchor="end" font-family="var(--font-mono)">${tickText}</text>
+      <text x="${paddingLeft - 8}" y="${yPos + 4}" fill="var(--text-muted)" font-size="11" text-anchor="end" font-family="var(--font-mono)">${tickText}</text>
     `;
   }
 
   let barsSvg = "";
   chartData.forEach((d, idx) => {
-    const xCenter = paddingLeft + (idx * barSlotW) + (barSlotW / 2);
-    const xPos = xCenter - (barWidth / 2);
-    const barHeight = Math.max(6, (d.value / maxVal) * chartH);
-    const yPos = paddingTop + chartH - barHeight;
+    const barH = Math.max(4, (d.value / maxVal) * chartH);
+    const xPos = paddingLeft + (idx * slotW) + (slotW - barW) / 2;
+    const yPos = paddingTop + chartH - barH;
 
     barsSvg += `
-      <g class="bar-group" style="cursor: pointer;">
-        <!-- Hover background track -->
-        <rect x="${xCenter - barSlotW * 0.48}" y="${paddingTop}" width="${barSlotW * 0.96}" height="${chartH}" fill="var(--bg-hover)" opacity="0" class="bar-hover-slot" rx="4">
-          <title>${d.name}: ${d.displayLabel}</title>
-        </rect>
-
-        <!-- Value Label on Top -->
-        <text x="${xCenter}" y="${yPos - 7}" fill="var(--text-main)" font-size="11" font-weight="700" text-anchor="middle" font-family="var(--font-mono)">${d.displayLabel}</text>
-        
-        <!-- Bar Column -->
-        <rect x="${xPos}" y="${yPos}" width="${barWidth}" height="${barHeight}" rx="4" ry="4" fill="${d.color}" opacity="0.9" />
-        
-        <!-- X-Axis Label -->
-        <text x="${xCenter}" y="${paddingTop + chartH + 20}" fill="${d.color}" font-size="10.5" font-weight="600" text-anchor="middle" font-family="var(--font-mono)">${d.name}</text>
+      <g class="bar-group" tabindex="0">
+        <title>${d.name} (${d.semantic}): ${d.displayLabel}</title>
+        <rect x="${xPos - (slotW - barW) / 4}" y="${paddingTop}" width="${slotW - (slotW - barW) / 2}" height="${chartH}" fill="transparent" class="bar-hover-track" />
+        <rect x="${xPos}" y="${yPos}" width="${barW}" height="${barH}" rx="4" fill="${d.color}" opacity="0.9" />
+        <text x="${xPos + barW / 2}" y="${yPos - 7}" fill="var(--text-main)" font-size="11" font-weight="600" text-anchor="middle" font-family="var(--font-mono)">${d.displayLabel}</text>
+        <text x="${xPos + barW / 2}" y="${paddingTop + chartH + 18}" fill="var(--text-main)" font-size="11" font-weight="600" text-anchor="middle" font-family="var(--font-mono)">${d.name}</text>
+        <text x="${xPos + barW / 2}" y="${paddingTop + chartH + 32}" fill="var(--text-muted)" font-size="9" text-anchor="middle">${d.semantic.split('/')[0].trim()}</text>
       </g>
     `;
   });
@@ -2516,15 +2557,10 @@ function renderSvgBarChart() {
   `;
 }
 
-// Update Cumulative Metrics Tab with Mode-Level Profiles
+// Update Cumulative Metrics Tab with Mode-Level Profiles (Vocabulary & Diversity)
 function updateMetricsTab() {
   const modeCardsContainer = document.getElementById("mode-stat-cards-container");
   const tableBody = document.getElementById("metrics-table-body");
-  const chartLatency = document.getElementById("chart-latency-body");
-  const chartTokens = document.getElementById("chart-tokens-body");
-  const chartThroughput = document.getElementById("chart-throughput-body");
-  const chartEntropy = document.getElementById("chart-entropy-body");
-
   if (!modeCardsContainer || !tableBody) return;
 
   const rawKeys = Object.keys(cumulativeBenchmarkHistory);
@@ -2540,57 +2576,29 @@ function updateMetricsTab() {
   if (totalSampleCount === 0) {
     modeCardsContainer.innerHTML = `
       <div style="color: var(--text-muted); font-size: 0.85rem; padding: 24px; text-align: center; border: 1px dashed var(--border-color); border-radius: 8px; grid-column: 1 / -1;">
-        Run a comparison to view mode-specific performance profiles (Median Latency, Tokens, Throughput, Empirical Entropy).
+        Run a comparison to view mode-specific vocabulary statistics and lexical diversity ratios.
       </div>
     `;
     tableBody.innerHTML = `
       <tr>
         <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 24px;">
-          Run a comparison or repeatability test to accumulate performance metrics.
+          Run a comparison or repeatability test to accumulate vocabulary metrics.
         </td>
       </tr>
     `;
-    chartLatency.innerHTML = `<div style="color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 20px;">Run comparison to plot latency distribution</div>`;
-    chartTokens.innerHTML = `<div style="color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 20px;">Run comparison to plot token histogram</div>`;
-    chartThroughput.innerHTML = `<div style="color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 20px;">Run comparison to plot throughput distribution</div>`;
-    if (chartEntropy) {
-      chartEntropy.innerHTML = `<div style="color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 20px;">Run comparison to plot entropy distribution</div>`;
-    }
     return;
   }
 
   modeCardsContainer.innerHTML = "";
   tableBody.innerHTML = "";
-  chartLatency.innerHTML = "";
-  chartTokens.innerHTML = "";
-  chartThroughput.innerHTML = "";
-  if (chartEntropy) chartEntropy.innerHTML = "";
-
-  let globalMaxLat = 0.01;
-  let globalMaxTok = 1;
-  let globalMaxThr = 1;
-  let globalMaxEnt = 1.0;
-
-  keys.forEach(k => {
-    const samples = cumulativeBenchmarkHistory[k] || [];
-    samples.forEach(s => {
-      if (s.latency > globalMaxLat) globalMaxLat = s.latency;
-      if (s.tokens > globalMaxTok) globalMaxTok = s.tokens;
-      if (s.throughput > globalMaxThr) globalMaxThr = s.throughput;
-      const ent = s.entropy !== undefined ? s.entropy : calculateShannonEntropy(s.text);
-      if (ent > globalMaxEnt) globalMaxEnt = ent;
-    });
-  });
 
   keys.forEach(presetId => {
     const samples = cumulativeBenchmarkHistory[presetId] || [];
     if (samples.length === 0) return;
 
-    const p = PRESETS.find(x => x.id === presetId) || { color: '#58a6ff', temp: 1.0, topK: 64 };
-    const latStats = calculateStats(samples.map(s => s.latency));
-    const tokStats = calculateStats(samples.map(s => s.tokens));
-    const thrStats = calculateStats(samples.map(s => s.throughput));
-    const entStats = calculateStats(samples.map(s => s.entropy !== undefined ? s.entropy : calculateShannonEntropy(s.text)));
+    const p = PRESETS.find(x => x.id === presetId) || { color: '#58a6ff', name: presetId, semantic: 'Standard', desc: '', useCase: '' };
+    const textArray = samples.map(s => s.text);
+    const vStats = getVocabularyStats(textArray);
 
     // 1. Render Dedicated Mode Profile Card
     const modeCard = document.createElement("div");
@@ -2602,125 +2610,46 @@ function updateMetricsTab() {
         <span class="sample-badge" style="color: ${p.color}; font-weight: 500;">${p.semantic}</span>
       </div>
       <div class="mode-stat-row">
-        <span>Median Latency:</span>
-        <strong>${latStats.median.toFixed(2)}s</strong>
+        <span>Unique Vocabulary (|V|):</span>
+        <strong>${vStats.uniqueWords} words</strong>
       </div>
       <div class="mode-stat-row">
-        <span>Observed Range:</span>
-        <strong>${latStats.min.toFixed(2)}s &ndash; ${latStats.max.toFixed(2)}s</strong>
+        <span>Lexical Diversity (TTR):</span>
+        <strong>${vStats.ttr}%</strong>
       </div>
       <div class="mode-stat-row">
-        <span>Median Output Length:</span>
-        <strong>${Math.round(tokStats.median)} tokens</strong>
+        <span>Total Word Volume (N):</span>
+        <strong>${vStats.totalWords} words</strong>
       </div>
       <div class="mode-stat-row">
-        <span>Median Throughput:</span>
-        <strong>${thrStats.median.toFixed(1)} tok/s</strong>
-      </div>
-      <div class="mode-stat-row">
-        <span>Median Empirical Entropy:</span>
-        <strong>${entStats.median.toFixed(2)} bits/word</strong>
+        <span>Runs Sampled:</span>
+        <strong>${samples.length} run${samples.length > 1 ? 's' : ''}</strong>
       </div>
     `;
     modeCardsContainer.appendChild(modeCard);
 
-    // 2. Table Row with N-sample badge, Min-Max Range and Empirical Entropy
+    // 2. Table Row
     const row = document.createElement("tr");
     row.innerHTML = `
       <td style="color: ${p.color}; font-weight: 600;">"${presetId}"</td>
       <td><span class="sample-badge" style="color: ${p.color}; font-weight: 500;">${p.semantic}</span></td>
       <td><span class="sample-badge">N = ${samples.length}</span></td>
-      <td>
-        <strong>${latStats.median.toFixed(2)}s</strong>
-        <span style="font-size:0.75rem; color:var(--text-muted); margin-left:4px;">[${latStats.min.toFixed(2)} &ndash; ${latStats.max.toFixed(2)}s]</span>
-      </td>
-      <td>
-        <strong>${Math.round(tokStats.median)}</strong>
-        <span style="font-size:0.75rem; color:var(--text-muted); margin-left:4px;">[${tokStats.min} &ndash; ${tokStats.max}]</span>
-      </td>
-      <td>${thrStats.median.toFixed(1)} tok/s</td>
-      <td>
-        <strong>${entStats.median.toFixed(2)} bits</strong>
-        <span style="font-size:0.75rem; color:var(--text-muted); margin-left:4px;">[${entStats.min.toFixed(2)} &ndash; ${entStats.max.toFixed(2)}]</span>
-      </td>
+      <td><strong>${vStats.totalWords}</strong></td>
+      <td><strong style="color: ${p.color};">${vStats.uniqueWords} words</strong></td>
+      <td><strong>${vStats.ttr}%</strong></td>
+      <td style="color: var(--text-muted); font-size: 0.8rem;">${p.desc}</td>
     `;
     tableBody.appendChild(row);
-
-    // 3. Chart 1: Latency Distribution Box-Plot with Min-Max Band and Median Line
-    const minPercent = Math.min(100, Math.round((latStats.min / globalMaxLat) * 100));
-    const maxPercent = Math.min(100, Math.round((latStats.max / globalMaxLat) * 100));
-    const medPercent = Math.min(100, Math.round((latStats.median / globalMaxLat) * 100));
-    const rangeWidth = Math.max(2, maxPercent - minPercent);
-
-    const latRow = document.createElement("div");
-    latRow.className = "chart-row";
-    latRow.innerHTML = `
-      <div class="chart-label" style="color: ${p.color};">${presetId} <span style="font-size:0.7rem; color:var(--text-muted);">(N=${samples.length})</span></div>
-      <div class="distribution-track" title="Median: ${latStats.median.toFixed(2)}s | Min: ${latStats.min.toFixed(2)}s | Max: ${latStats.max.toFixed(2)}s">
-        <div class="dist-range-band" style="left: ${minPercent}%; width: ${rangeWidth}%; background: ${p.color};"></div>
-        <div class="dist-median-marker" style="left: ${medPercent}%; background: ${p.color};"></div>
-      </div>
-      <div class="chart-val">${latStats.median.toFixed(2)}s</div>
-    `;
-    chartLatency.appendChild(latRow);
-
-    // 4. Chart 2: Output Length Token Histogram
-    const tokPercent = Math.min(100, Math.round((tokStats.median / globalMaxTok) * 100));
-    const tokRow = document.createElement("div");
-    tokRow.className = "chart-row";
-    tokRow.innerHTML = `
-      <div class="chart-label" style="color: ${p.color};">${presetId}</div>
-      <div class="chart-bar-track">
-        <div class="chart-bar-fill" style="width: ${tokPercent}%; background: ${p.color};"></div>
-      </div>
-      <div class="chart-val">${Math.round(tokStats.median)} tok</div>
-    `;
-    chartTokens.appendChild(tokRow);
-
-    // 5. Chart 3: Throughput Histogram
-    const thrPercent = Math.min(100, Math.round((thrStats.median / globalMaxThr) * 100));
-    const thrRow = document.createElement("div");
-    thrRow.className = "chart-row";
-    thrRow.innerHTML = `
-      <div class="chart-label" style="color: ${p.color};">${presetId}</div>
-      <div class="chart-bar-track">
-        <div class="chart-bar-fill" style="width: ${thrPercent}%; background: ${p.color};"></div>
-      </div>
-      <div class="chart-val">${thrStats.median.toFixed(1)}</div>
-    `;
-    chartThroughput.appendChild(thrRow);
-
-    // 6. Chart 4: Empirical Entropy Distribution Box-Plot
-    if (chartEntropy) {
-      const entMinPercent = Math.min(100, Math.round((entStats.min / globalMaxEnt) * 100));
-      const entMaxPercent = Math.min(100, Math.round((entStats.max / globalMaxEnt) * 100));
-      const entMedPercent = Math.min(100, Math.round((entStats.median / globalMaxEnt) * 100));
-      const entRangeWidth = Math.max(2, entMaxPercent - entMinPercent);
-
-      const entRow = document.createElement("div");
-      entRow.className = "chart-row";
-      entRow.innerHTML = `
-        <div class="chart-label" style="color: ${p.color};">${presetId} <span style="font-size:0.7rem; color:var(--text-muted);">(N=${samples.length})</span></div>
-        <div class="distribution-track" title="Median: ${entStats.median.toFixed(2)} bits | Min: ${entStats.min.toFixed(2)} bits | Max: ${entStats.max.toFixed(2)} bits">
-          <div class="dist-range-band" style="left: ${entMinPercent}%; width: ${entRangeWidth}%; background: ${p.color};"></div>
-          <div class="dist-median-marker" style="left: ${entMedPercent}%; background: ${p.color};"></div>
-        </div>
-        <div class="chart-val">${entStats.median.toFixed(2)} bits</div>
-      `;
-      chartEntropy.appendChild(entRow);
-    }
   });
 }
 
 // Continuous Streaming Helper
 function updateLiveDisplay(card, text, isFinished, p, startTime) {
-  const elapsed = ((performance.now() - startTime) / 1000).toFixed(2);
   const words = text.split(/\s+/).filter(Boolean).length;
 
   if (isFinished) {
     card.body.textContent = text;
-    const entropy = calculateShannonEntropy(text);
-    card.stats.textContent = `~${words} words | H: ${entropy.toFixed(2)} bits/word (${elapsed}s)`;
+    card.stats.textContent = `~${words} words`;
   } else {
     card.body.innerHTML = '';
     const textNode = document.createTextNode(text);
@@ -2728,62 +2657,44 @@ function updateLiveDisplay(card, text, isFinished, p, startTime) {
     cursor.className = 'cursor-indicator';
     card.body.appendChild(textNode);
     card.body.appendChild(cursor);
-    card.stats.textContent = `Streaming... ~${words} tok (${elapsed}s)`;
+    card.stats.textContent = `Streaming... ~${words} words`;
   }
   card.body.scrollTop = card.body.scrollHeight;
 }
 
-// Universal Stream Presets
+// Universal Stream Presets: Strict Native Execution with Honest Error Reporting
 async function streamPreset(presetId, userPrompt, systemPrompt, card, runIndex = 0, isStreaming = true, isPlainTextOnly = true) {
   const p = PRESETS.find(x => x.id === presetId) || PRESETS[0];
   const startTime = performance.now();
   const resolved = resolveLM();
 
-  let nativeSuccess = false;
   let fullText = "";
 
-  // 1. Try Native LanguageModel (Real On-Device Gemini Nano in Blink)
+  // 1. Real On-Device LanguageModel Execution
   if (resolved && resolved.obj) {
     try {
       card.stats.textContent = `Creating session (${p.name})...`;
       
-      let session = null;
-      try {
-        session = await resolved.obj.create({
-          samplingMode: presetId,
-          initialPrompts: systemPrompt ? [{ role: "system", content: systemPrompt }] : undefined,
-          systemPrompt: systemPrompt || undefined
-        });
-      } catch (err) {
-        // If samplingMode rejected, fallback to explicit topK/temperature
-        session = await resolved.obj.create({
-          topK: Math.max(1, p.topK),
-          temperature: p.temp,
-          initialPrompts: systemPrompt ? [{ role: "system", content: systemPrompt }] : undefined,
-          systemPrompt: systemPrompt || undefined
-        });
-      }
-
-      // If Blink silently dropped samplingMode because AIPromptAPIParams runtime flag is off:
-      if (session && session.samplingMode === undefined && p.temp !== 1.0) {
-        try {
-          if (typeof session.destroy === "function") session.destroy();
-          session = await resolved.obj.create({
-            topK: Math.max(1, p.topK),
-            temperature: p.temp,
-            initialPrompts: systemPrompt ? [{ role: "system", content: systemPrompt }] : undefined,
-            systemPrompt: systemPrompt || undefined
-          });
-        } catch (e) {
-          // Keep original session if recreate fails
-        }
-      }
+      const session = await resolved.obj.create({
+        samplingMode: presetId,
+        initialPrompts: systemPrompt ? [{ role: "system", content: systemPrompt }] : undefined,
+        systemPrompt: systemPrompt || undefined
+      });
 
       if (session) {
         if (isStreaming && typeof session.promptStreaming === "function") {
           // Real-time streaming tokens from real on-device Gemini Nano
           card.stats.textContent = `Streaming tokens...`;
-          const stream = session.promptStreaming(userPrompt);
+          const isJsonPrompt = (document.getElementById("sample-prompt-selector")?.value === "json_schema") ||
+                               (userPrompt || "").toLowerCase().includes("flight") ||
+                               (userPrompt || "").toLowerCase().includes("json");
+          const promptOpts = isJsonPrompt ? { responseConstraint: FLIGHT_SCHEMA } : undefined;
+          let stream = null;
+          try {
+            stream = promptOpts ? session.promptStreaming(userPrompt, promptOpts) : session.promptStreaming(userPrompt);
+          } catch (optErr) {
+            stream = session.promptStreaming(userPrompt);
+          }
           let rawAccumulated = "";
 
           if (stream[Symbol.asyncIterator]) {
@@ -2809,46 +2720,59 @@ async function streamPreset(presetId, userPrompt, systemPrompt, card, runIndex =
 
           if (rawAccumulated.trim().length > 0) {
             fullText = isPlainTextOnly ? sanitizePlainText(rawAccumulated) : rawAccumulated;
-            nativeSuccess = true;
           }
         } else if (typeof session.prompt === "function") {
           // Non-streaming batch inference on real on-device Gemini Nano
           card.stats.textContent = `Inferring on-device...`;
           const raw = await session.prompt(userPrompt);
           fullText = isPlainTextOnly ? sanitizePlainText(raw) : raw;
-          nativeSuccess = true;
         }
+
+        const durationSec = (performance.now() - startTime) / 1000;
+        const tokenCount = fullText.split(/\s+/).filter(Boolean).length;
+        updateLiveDisplay(card, fullText, true, p, startTime);
+        return { latency: Math.max(durationSec, 0.05), tokens: tokenCount, text: fullText };
       }
     } catch (e) {
-      console.warn(`Native LanguageModel session error for ${presetId}:`, e);
+      console.warn(`Native LanguageModel session error for "${presetId}":`, e);
+      // CRITICAL RULE: Never paper over native errors with synthetic outputs!
+      const isTypeError = e instanceof TypeError || (e.name === "TypeError");
+      const isEnumError = (e.message || "").includes("LanguageModelSamplingMode") || (e.message || "").includes("samplingMode");
+      
+      let errorHtml = `<div style="padding: 12px; background: rgba(248, 81, 73, 0.1); border: 1px solid var(--accent-red); border-radius: 6px; color: var(--accent-red); font-size: 0.82rem; line-height: 1.5;">`;
+      if (isTypeError && isEnumError) {
+        errorHtml += `<strong>❌ WebIDL TypeError:</strong><br><code>"${presetId}"</code> is not a valid enum value of <code>LanguageModelSamplingMode</code> in this browser build.<br><div style="font-size:0.75rem; color:var(--text-muted); margin-top:6px;">This preset was introduced in the 7-preset spectrum expansion (<a href="https://chromium-review.googlesource.com/c/chromium/src/+/8119572" target="_blank" style="color:var(--accent-blue);">CL 8119572</a> / Chrome 154+). Your current browser build implements the 5 baseline presets.</div>`;
+      } else {
+        errorHtml += `<strong>❌ ${e.name || 'Error'}:</strong><br>${e.message || String(e)}`;
+      }
+      errorHtml += `</div>`;
+
+      card.body.innerHTML = errorHtml;
+      card.stats.textContent = `❌ ${e.name || 'Error'}`;
+      return { latency: 0, tokens: 0, text: "", error: e };
     }
   }
 
-  // 2. High-Fidelity Client-Side Fallback (only used when browser lacks Prompt API flags)
-  if (!nativeSuccess) {
-    fullText = getPresetText(presetId, userPrompt, systemPrompt, runIndex, isPlainTextOnly);
+  // 2. High-Fidelity Client-Side Preview (ONLY used when browser completely lacks LanguageModel, e.g. non-flagged browser)
+  fullText = getPresetText(presetId, userPrompt, systemPrompt, runIndex, isPlainTextOnly);
 
-    if (!isStreaming) {
-      // Instant batch display
-      updateLiveDisplay(card, fullText, false, p, startTime);
-    } else {
-      const tokens = fullText.split(/(\s+)/);
-      let accumulated = "";
+  if (!isStreaming) {
+    updateLiveDisplay(card, fullText, false, p, startTime);
+  } else {
+    const tokens = fullText.split(/(\s+)/);
+    let accumulated = "";
 
-      for (let i = 0; i < tokens.length; i++) {
-        accumulated += tokens[i];
-        updateLiveDisplay(card, accumulated, false, p, startTime);
-        
-        const delay = tokens[i].trim().length > 0 ? (Math.floor(Math.random() * 20) + 30) : 10;
-        await new Promise(r => setTimeout(r, delay));
-      }
+    for (let i = 0; i < tokens.length; i++) {
+      accumulated += tokens[i];
+      updateLiveDisplay(card, accumulated, false, p, startTime);
+      const delay = tokens[i].trim().length > 0 ? (Math.floor(Math.random() * 20) + 30) : 10;
+      await new Promise(r => setTimeout(r, delay));
     }
   }
 
   const durationSec = (performance.now() - startTime) / 1000;
   const tokenCount = fullText.split(/\s+/).filter(Boolean).length;
   updateLiveDisplay(card, fullText, true, p, startTime);
-
   return { latency: Math.max(durationSec, 0.05), tokens: tokenCount, text: fullText };
 }
 
@@ -2899,17 +2823,19 @@ async function runBenchmark() {
   const promises = activePresets.map(async (presetId) => {
     const res = await streamPreset(presetId, userPrompt, systemPrompt, cards[presetId], 0, isStreaming, isPlainTextOnly);
     
-    // Accumulate into historical multi-sample array
-    if (!cumulativeBenchmarkHistory[presetId]) {
-      cumulativeBenchmarkHistory[presetId] = [];
+    // Accumulate into historical multi-sample array only if inference succeeded
+    if (!res.error && res.text) {
+      if (!cumulativeBenchmarkHistory[presetId]) {
+        cumulativeBenchmarkHistory[presetId] = [];
+      }
+      cumulativeBenchmarkHistory[presetId].push({
+        latency: res.latency,
+        tokens: res.tokens,
+        throughput: res.latency > 0 ? (res.tokens / res.latency) : 0,
+        entropy: 0,
+        text: res.text
+      });
     }
-    cumulativeBenchmarkHistory[presetId].push({
-      latency: res.latency,
-      tokens: res.tokens,
-      throughput: res.latency > 0 ? (res.tokens / res.latency) : 0,
-      entropy: calculateShannonEntropy(res.text),
-      text: res.text
-    });
   });
 
   await Promise.all(promises);
@@ -2972,19 +2898,25 @@ async function runVarianceTest() {
 
   for (let r = 0; r < numRuns; r++) {
     const res = await streamPreset(presetId, userPrompt, systemPrompt, runCards[r], r, isStreaming, isPlainTextOnly);
+    if (res.error) {
+      // If native session creation threw an error (e.g. TypeError on unsupported enum), abort subsequent repeat runs
+      runBtn.disabled = false;
+      return;
+    }
     completedOutputs.push(res.text ? res.text.trim() : "");
 
-    // Also push into cumulative benchmark history for statistical rigor
-    if (!cumulativeBenchmarkHistory[presetId]) {
-      cumulativeBenchmarkHistory[presetId] = [];
+    if (!res.error && res.text) {
+      if (!cumulativeBenchmarkHistory[presetId]) {
+        cumulativeBenchmarkHistory[presetId] = [];
+      }
+      cumulativeBenchmarkHistory[presetId].push({
+        latency: res.latency,
+        tokens: res.tokens,
+        throughput: res.latency > 0 ? (res.tokens / res.latency) : 0,
+        entropy: 0,
+        text: res.text
+      });
     }
-    cumulativeBenchmarkHistory[presetId].push({
-      latency: res.latency,
-      tokens: res.tokens,
-      throughput: res.latency > 0 ? (res.tokens / res.latency) : 0,
-      entropy: calculateShannonEntropy(res.text),
-      text: res.text
-    });
   }
 
   // Normalization helper for robust cross-run matching
@@ -3034,9 +2966,15 @@ async function runVarianceTest() {
   const totalUnique = variationGroups.length;
   const determinismPercent = (totalUnique === 1) ? 100 : Math.max(0, Math.round(((numRuns - totalUnique) / (numRuns - 1)) * 100));
 
+  const varVocabStats = getVocabularyStats(completedOutputs);
+
   document.getElementById("var-stat-determinism").textContent = `${totalUnique === 1 ? 100 : determinismPercent}%`;
   document.getElementById("var-stat-determinism").style.color = (totalUnique === 1) ? "var(--accent-green)" : "var(--accent-purple)";
   document.getElementById("var-stat-unique").textContent = `${totalUnique} of ${numRuns}`;
+  const vocabBox = document.getElementById("var-stat-vocab");
+  if (vocabBox) {
+    vocabBox.textContent = `${varVocabStats.uniqueWords} words (${varVocabStats.ttr}% TTR)`;
+  }
 
   updateMetricsTab();
   runBtn.disabled = false;
@@ -3069,12 +3007,15 @@ function initApp() {
         document.getElementById("system-prompt").value = SAMPLE_PROMPTS[val].system;
         document.getElementById("user-prompt").value = SAMPLE_PROMPTS[val].user;
       }
+      updateSchemaBadge(val);
+      renderHighlightedCode();
     });
 
     // Default to structured Clean-Tech Airship Pitch & 3 Bullets
     promptSelect.value = "airship_pitch";
     document.getElementById("system-prompt").value = SAMPLE_PROMPTS.airship_pitch.system;
     document.getElementById("user-prompt").value = SAMPLE_PROMPTS.airship_pitch.user;
+    updateSchemaBadge("airship_pitch");
   }
 
   const runBtn = document.getElementById("run-benchmark-btn");
@@ -3116,23 +3057,31 @@ function initApp() {
     });
   });
 
+  function switchTab(tabId) {
+    document.querySelectorAll(".tab").forEach(t => {
+      t.classList.toggle("active", t.getAttribute("data-tab") === tabId);
+    });
+    const s1 = document.getElementById("tab-content-stream");
+    const s2 = document.getElementById("tab-content-variance");
+    const s3 = document.getElementById("tab-content-metrics");
+    const s4 = document.getElementById("tab-content-spec");
+
+    if (s1) s1.style.display = tabId === "stream" ? "block" : "none";
+    if (s2) s2.style.display = tabId === "variance" ? "block" : "none";
+    if (s3) s3.style.display = tabId === "metrics" ? "block" : "none";
+    if (s4) s4.style.display = tabId === "spec" ? "block" : "none";
+
+    if (tabId === "metrics") {
+      updateMetricsTab();
+    } else if (tabId === "spec") {
+      renderHighlightedCode();
+    }
+  }
+  window.switchTab = switchTab;
+
   document.querySelectorAll(".tab").forEach(tab => {
     tab.addEventListener("click", () => {
-      document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-      tab.classList.add("active");
-
-      const tabId = tab.getAttribute("data-tab");
-      document.getElementById("tab-content-stream").style.display = tabId === "stream" ? "block" : "none";
-      document.getElementById("tab-content-variance").style.display = tabId === "variance" ? "block" : "none";
-      document.getElementById("tab-content-metrics").style.display = tabId === "metrics" ? "block" : "none";
-      document.getElementById("tab-content-code").style.display = tabId === "code" ? "block" : "none";
-      document.getElementById("tab-content-spec").style.display = tabId === "spec" ? "block" : "none";
-
-      if (tabId === "metrics") {
-        updateMetricsTab();
-      } else if (tabId === "code") {
-        renderHighlightedCode();
-      }
+      switchTab(tab.getAttribute("data-tab"));
     });
   });
 
