@@ -2708,7 +2708,9 @@ async function checkApiAvailability() {
   const text = document.getElementById("status-text");
   const guide = document.getElementById("activation-guide-box");
 
-  const { fullVersion } = await detectBrowserVersion();
+  const { fullVersion, brandName, detectedBrowserKey } = await detectBrowserVersion();
+  const guideConfig = BROWSER_GUIDES[detectedBrowserKey] || BROWSER_GUIDES.chrome;
+  const componentsUrl = `${guideConfig.scheme}components`;
   const resolved = resolveLM();
 
   if (!resolved) {
@@ -2817,14 +2819,14 @@ async function checkApiAvailability() {
     } else if (availability === "after-download" || availability === "downloadable") {
       if (runBtn) {
         runBtn.disabled = true;
-        runBtn.title = "Gemini Nano model is downloading. Check progress in chrome://components.";
+        runBtn.title = `Gemini Nano model is downloading. Check progress in ${componentsUrl}.`;
       }
       if (varBtn) {
         varBtn.disabled = true;
-        varBtn.title = "Gemini Nano model is downloading. Check progress in chrome://components.";
+        varBtn.title = `Gemini Nano model is downloading. Check progress in ${componentsUrl}.`;
       }
       dot.className = "status-dot yellow";
-      text.innerHTML = `⏳ <strong>Gemini Nano Downloading...</strong> (Check status in <code>chrome://components</code>)`;
+      text.innerHTML = `⏳ <strong>Gemini Nano Downloading...</strong> (Check status in <code>${componentsUrl}</code>)`;
       guide.classList.add("show");
     } else {
       dot.className = "status-dot blue";
