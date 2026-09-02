@@ -768,8 +768,8 @@
     .metric-pill-btn {
       background: transparent;
       border: none;
-      color: var(--text-muted);
-      padding: 5px 10px;
+      color: var(--text-muted) !important;
+      padding: 5px 12px;
       border-radius: 4px;
       font-size: 0.78rem;
       font-weight: 600;
@@ -778,11 +778,12 @@
     }
 
     .metric-pill-btn:hover {
-      color: var(--text-main);
+      color: var(--text-main) !important;
+      background: var(--bg-hover);
     }
 
     .metric-pill-btn.active {
-      background: var(--accent-blue);
+      background: var(--accent-blue) !important;
       color: #ffffff !important;
     }
 
@@ -953,14 +954,20 @@
 
     .metrics-table {
       width: 100%;
-      border-collapse: collapse;
+      border-collapse: separate;
+      border-spacing: 0;
       background: var(--bg-secondary);
       border-radius: 8px;
-      overflow: hidden;
+      overflow: visible;
       border: 1px solid var(--border-color);
       font-size: 0.85rem;
       color: var(--text-main) !important;
     }
+
+    .metrics-table th:first-child { border-top-left-radius: 7px; }
+    .metrics-table th:last-child { border-top-right-radius: 7px; }
+    .metrics-table tr:last-child td:first-child { border-bottom-left-radius: 7px; }
+    .metrics-table tr:last-child td:last-child { border-bottom-right-radius: 7px; }
 
     .metrics-table th {
       background: var(--bg-card);
@@ -1160,6 +1167,23 @@
       opacity: 1;
       visibility: visible;
       transform: translateX(-50%) translateY(0);
+    }
+
+    .metric-tooltip-popover.align-right {
+      left: auto;
+      right: -10px;
+      transform: translateY(4px);
+    }
+
+    .metric-tooltip-wrap:hover .metric-tooltip-popover.align-right,
+    .metric-tooltip-wrap:focus-within .metric-tooltip-popover.align-right {
+      transform: translateY(0);
+    }
+
+    .metric-tooltip-popover.align-right::after {
+      left: auto;
+      right: 25px;
+      transform: none;
     }
 
     .metric-tooltip-header {
@@ -1564,6 +1588,86 @@
             Select your desired presets and click <strong>"Run Comparison"</strong> to stream outputs side-by-side in spectrum order.
           </div>
         </div>
+        <!-- Main Page: Linguistic Metrics & Mathematical Foundations Directly Visible on Tab 1 -->
+        <div class="entropy-theory-card" style="margin-top: 24px;">
+          <div class="entropy-theory-title">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            📐 Key Metrics &amp; Mathematical Formulations
+          </div>
+          <p style="font-size: 0.86rem; color: var(--text-main); margin-bottom: 14px; line-height: 1.5;">
+            This studio quantifies the behavioral contract of each on-device Prompt API preset using established natural language processing and sampling formulations:
+          </p>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-bottom: 14px;">
+            <!-- Determinism -->
+            <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px 14px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <strong style="color: var(--accent-blue); font-size: 0.9rem;">🎯 Exact-Match Determinism (%)</strong>
+                <span class="sample-badge" style="color: #3fb950; font-weight:600;">100% on greedy</span>
+              </div>
+              <div class="math-equation-box" style="margin: 6px 0; font-size: 0.95rem;">
+                <span class="math-var">Determinism</span>
+                <span class="math-op">=</span>
+                <span class="math-fraction">
+                  <span class="math-num">N<span class="math-sub">identical</span></span>
+                  <span class="math-den">N<span class="math-sub">total</span></span>
+                </span>
+                <span class="math-op">&times;</span>
+                <span class="math-var">100%</span>
+              </div>
+              <p style="font-size: 0.78rem; color: var(--text-muted); margin: 6px 0 0; line-height: 1.45;">
+                Percentage of runs yielding byte-for-byte identical text. <code>most-predictable</code> guarantees 100% determinism via greedy argmax pathing (<span class="math-var">w<span class="math-sub">t</span> = arg max P(w|w<span class="math-sub">&lt;t</span>)</span>).
+              </p>
+            </div>
+
+            <!-- TTR -->
+            <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px 14px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <strong style="color: var(--accent-purple); font-size: 0.9rem;">📈 Lexical Diversity (TTR %)</strong>
+                <span class="sample-badge" style="color: var(--accent-purple); font-weight:600;">Linguistic Metric</span>
+              </div>
+              <div class="math-equation-box" style="margin: 6px 0; font-size: 0.95rem;">
+                <span class="math-var">TTR</span>
+                <span class="math-op">=</span>
+                <span class="math-fraction">
+                  <span class="math-num">|V|</span>
+                  <span class="math-den">N</span>
+                </span>
+                <span class="math-op">&times;</span>
+                <span class="math-var">100%</span>
+              </div>
+              <p style="font-size: 0.78rem; color: var(--text-muted); margin: 6px 0 0; line-height: 1.45;">
+                Type-Token Ratio: measures unique vocabulary types (<span class="math-var">|V|</span>) over total words (<span class="math-var">N</span>). Higher percentage indicates richer lexicon and resistance to token repetition.
+              </p>
+            </div>
+
+            <!-- Unique Vocab -->
+            <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px 14px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <strong style="color: var(--accent-green); font-size: 0.9rem;">📖 Unique Vocabulary (|V|)</strong>
+                <span class="sample-badge" style="color: var(--accent-green); font-weight:600;">Set Cardinality</span>
+              </div>
+              <div class="math-equation-box" style="margin: 6px 0; font-size: 0.95rem;">
+                <span class="math-var">|V|</span>
+                <span class="math-op">=</span>
+                <span class="math-op">|</span>
+                <span class="math-var">{w &isin; Output : unique}</span>
+                <span class="math-op">|</span>
+              </div>
+              <p style="font-size: 0.78rem; color: var(--text-muted); margin: 6px 0 0; line-height: 1.45;">
+                Total unique words generated. Measures whether the model is restricted to high-probability core tokens or sampling deeper into the vocabulary distribution tail.
+              </p>
+            </div>
+          </div>
+
+          <div style="font-size: 0.8rem; color: var(--text-muted); display: flex; gap: 16px; flex-wrap: wrap; padding-top: 10px; border-top: 1px solid var(--border-color);">
+            <span style="font-weight: 600; color: var(--text-main);">📚 Specification &amp; Literature References:</span>
+            <a href="https://github.com/webmachinelearning/prompt-api/issues/203" target="_blank" style="color: var(--accent-blue); text-decoration: none;">W3C Prompt API Spec Issue #203 &rarr;</a>
+            <a href="https://github.com/webmachinelearning/prompt-api" target="_blank" style="color: var(--accent-blue); text-decoration: none;">W3C Prompt API Explainer &rarr;</a>
+            <span style="color: var(--text-muted);">Tweedie &amp; Baayen (1998) <em>Lexical Statistics</em></span>
+            <span style="color: var(--text-muted);">Holtzman et al. (2019) <em>Neural Text Degeneration</em></span>
+          </div>
+        </div>
       </div>
 
       <!-- Tab 2: Multi-Run Repeatability & Variance -->
@@ -1608,7 +1712,7 @@
           </div>
 
           <!-- Variance Stats Banner -->
-          <div class="metrics-summary-grid" id="variance-metrics-boxes" style="display: none; grid-template-columns: repeat(4, 1fr);">
+          <div class="metrics-summary-grid" id="variance-metrics-boxes" style="display: grid; grid-template-columns: repeat(4, 1fr);">
             <div class="metric-stat-box">
               <span class="title">Selected Preset</span>
               <span class="value" id="var-stat-preset" style="font-size: 1.05rem;">-</span>
@@ -1747,7 +1851,7 @@
                   <span class="metric-tooltip-wrap">
                     Unique Vocabulary (|V|)
                     <span class="metric-info-icon" onclick="openMetricsModal(); event.stopPropagation();">i</span>
-                    <div class="metric-tooltip-popover">
+                    <div class="metric-tooltip-popover align-right">
                       <div class="metric-tooltip-header">📖 Unique Vocabulary (|V|)</div>
                       <div class="metric-tooltip-formula"><span class="math-var">|V|</span> <span class="math-op">=</span> <span class="math-op">|</span><span class="math-var">{unique words}</span><span class="math-op">|</span></div>
                       <div>Total number of distinct lexical types produced by this preset across runs.</div>
@@ -1759,7 +1863,7 @@
                   <span class="metric-tooltip-wrap">
                     Lexical Diversity (TTR %)
                     <span class="metric-info-icon" onclick="openMetricsModal(); event.stopPropagation();">i</span>
-                    <div class="metric-tooltip-popover">
+                    <div class="metric-tooltip-popover align-right">
                       <div class="metric-tooltip-header">📈 Lexical Diversity (TTR %)</div>
                       <div class="metric-tooltip-formula"><span class="math-var">TTR</span> <span class="math-op">=</span> <span class="math-fraction"><span class="math-num">|V|</span><span class="math-den">N</span></span> <span class="math-op">&times;</span> <span class="math-var">100%</span></div>
                       <div>Ratio of unique word types to total tokens. Higher percentage indicates richer vocabulary and less repetition.</div>
@@ -1779,65 +1883,10 @@
             </tbody>
           </table>
 
-          <!-- Linguistic Foundations & Pretty-Printed Equations Card -->
-          <div class="entropy-theory-card" style="margin-top: 20px;">
-            <div class="entropy-theory-title">
-              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-              Linguistic Foundations: Vocabulary Size &amp; Lexical Diversity in Sampling Modes
-            </div>
-            <p style="font-size: 0.86rem; color: var(--text-main); margin-bottom: 12px; line-height: 1.5;">
-              In natural language processing and quantitative linguistics, <strong>Lexical Diversity (Type-Token Ratio / TTR)</strong> quantifies the vocabulary variety of generated text. It is defined as the ratio of distinct lexical types (<span class="math-var">|V|</span>) to total token count (<span class="math-var">N</span>):
-            </p>
-
-            <div style="display:flex; justify-content:center; margin: 10px 0 16px;">
-              <div class="math-equation-box">
-                <span class="math-var">TTR</span>
-                <span class="math-op">=</span>
-                <span class="math-fraction">
-                  <span class="math-num">|V|</span>
-                  <span class="math-den">N</span>
-                </span>
-                <span class="math-op">&times;</span>
-                <span class="math-var">100%</span>
-                <span style="color: var(--text-muted); font-size: 0.8rem; margin-left: 12px; font-family: var(--font-sans); font-style: normal;">
-                  where <span class="math-var">|V|</span> = unique words, <span class="math-var">N</span> = total words
-                </span>
-              </div>
-            </div>
-
-            <div class="plain-math-box">
-              <div class="plain-math-item">
-                <strong style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-                  <span>1. Greedy Argmax Boundedness on <code>most-predictable</code>:</span>
-                  <div class="math-equation-box" style="padding: 2px 8px; font-size: 0.84rem; margin:0;">
-                    <span class="math-var">w<span class="math-sub">t</span></span>
-                    <span class="math-op">=</span>
-                    <span class="math-var" style="font-style:normal; font-weight:700;">arg max</span>
-                    <span class="math-sub" style="margin-left:2px;">w &isin; V</span>
-                    <span class="math-var" style="margin-left:3px;">P(w | w<span class="math-sub">&lt;t</span>)</span>
-                  </div>
-                </strong>
-                <span>Under deterministic greedy decoding, the model strictly selects the highest-probability token at every step. This constrains vocabulary exploration, yielding identical outputs and tight token clustering essential for code generation, JSON schema extraction, and deterministic verification.</span>
-              </div>
-
-              <div class="plain-math-item" style="margin-top: 8px;">
-                <strong>2. Distribution Flattening &amp; Tail Sampling on Creative Modes:</strong>
-                <span>As presets transition toward <code>creative</code> and <code>most-creative</code>, sampling flattens token likelihoods. This enables the model to sample deeper into the vocabulary distribution tail, producing higher unique vocabulary counts (<span class="math-var">|V|</span>) and substantially higher Lexical Diversity (<span class="math-var">TTR %</span>).</span>
-              </div>
-            </div>
-
-            <div style="font-size: 0.82rem; color: var(--text-muted); display: flex; gap: 16px; flex-wrap: wrap; margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border-color);">
-              <span style="font-weight: 600; color: var(--text-main);">📚 Academic &amp; Specification References:</span>
-              <a href="https://github.com/webmachinelearning/prompt-api/issues/203" target="_blank" style="color: var(--accent-blue); text-decoration: none;">W3C Prompt API Spec Issue #203 (Sampling Presets) &rarr;</a>
-              <a href="https://github.com/webmachinelearning/prompt-api" target="_blank" style="color: var(--accent-blue); text-decoration: none;">W3C Prompt API Explainer &rarr;</a>
-              <span style="color: var(--text-muted);" title="Tweedie & Baayen (1998)">Linguistics: Tweedie &amp; Baayen (1998) <em>Robustness of Lexical Statistics</em></span>
-              <span style="color: var(--text-muted);" title="Holtzman et al. (2019)">Decoding: Holtzman et al. (2019) <em>Neural Text Degeneration</em></span>
-            </div>
-          </div>
         </div>
       </div>
 
-      <!-- Tab 4: Normative Spec & JavaScript Code Reference -->
+            <!-- Tab 4: Normative Spec & JavaScript Code Reference -->
       <div id="tab-content-spec" style="display: none;">
         <div style="display: flex; flex-direction: column; gap: 24px;">
 
@@ -2202,7 +2251,7 @@ const SAMPLE_PROMPTS = {
 };
 
 // Global State with Cumulative Multi-Run Samples
-let selectedPresets = ["most-predictable", "predictable", "slightly-predictable", "balanced", "slightly-creative", "creative", "most-creative"];
+let selectedPresets = ["most-predictable", "predictable", "balanced", "creative", "most-creative"];
 let cumulativeBenchmarkHistory = {}; // Key: presetId -> Array of samples: [{ latency, tokens, throughput }]
 let activeBarChartMetric = "vocab"; // "latency", "tokens", "throughput", "entropy"
 
@@ -2756,24 +2805,37 @@ async function checkApiAvailability() {
 
     if (availability === "readily" || availability === "available" || availability === "readily-available") {
       dot.className = "status-dot green";
-      const supportedModes = [];
-      for (const p of PRESETS) {
-        try {
-          const availTest = await resolved.obj.availability?.({ samplingMode: p.id });
-          if (availTest && availTest !== "no") supportedModes.push(p.id);
-        } catch (e) {}
-      }
-      window.supportedSamplingModes = new Set(supportedModes);
+      const major = parseInt((fullVersion || "").split('.')[0], 10) || 0;
+      let supportedModes = [];
 
-      if (supportedModes.length > 0) {
-        // Automatically filter out any presets not in the active browser's WebIDL enum
-        selectedPresets = selectedPresets.filter(id => window.supportedSamplingModes.has(id));
-        if (selectedPresets.length === 0) {
-          selectedPresets = ["balanced"];
+      if (major >= 154) {
+        // Chrome 154+ (Canary / CL 8119572) supports all 7 presets
+        supportedModes = PRESETS.map(p => p.id);
+        // On 154+, enable all 7 presets by default if not yet modified
+        if (selectedPresets.length === 5) {
+          selectedPresets = PRESETS.map(p => p.id);
         }
-        renderSpectrum();
-        updateVarianceSelect();
+      } else if (major > 0 && major < 154) {
+        // Chrome 151-153 (CL 7801217) strictly supports the 5 baseline presets
+        supportedModes = ["most-predictable", "predictable", "balanced", "creative", "most-creative"];
+        selectedPresets = selectedPresets.filter(id => supportedModes.includes(id));
+      } else {
+        // Fallback: probe via availability
+        for (const p of PRESETS) {
+          try {
+            const availTest = await resolved.obj.availability?.({ samplingMode: p.id });
+            if (availTest && availTest !== "no") supportedModes.push(p.id);
+          } catch (e) {}
+        }
       }
+
+      window.supportedSamplingModes = new Set(supportedModes.length > 0 ? supportedModes : ["most-predictable", "predictable", "balanced", "creative", "most-creative"]);
+      selectedPresets = selectedPresets.filter(id => window.supportedSamplingModes.has(id));
+      if (selectedPresets.length === 0) {
+        selectedPresets = ["balanced"];
+      }
+      renderSpectrum();
+      updateVarianceSelect();
 
       text.innerHTML = `● <strong>LanguageModel Ready</strong>`;
     } else if (availability === "after-download" || availability === "downloadable") {
@@ -3233,6 +3295,18 @@ async function streamPreset(presetId, userPrompt, systemPrompt, card, runIndex =
 
   // 1. Real On-Device LanguageModel Execution
   if (resolved && resolved.obj) {
+    // Check if preset is unsupported in this browser build (prevents unhandled WebIDL TypeError)
+    if (window.supportedSamplingModes && window.supportedSamplingModes.size > 0 && !window.supportedSamplingModes.has(presetId)) {
+      card.body.innerHTML = `
+        <div style="padding: 14px; background: rgba(88, 166, 255, 0.08); border: 1px solid var(--border-color); border-radius: 8px; font-size: 0.82rem; line-height: 1.5; color: var(--text-main);">
+          <strong style="color: var(--accent-blue);">🔒 Preset Requires Chrome 154+ (CL 8119572)</strong><br>
+          The preset <code>"${p.name}"</code> is part of the expanded 7-preset spectrum and is not present in this browser's WebIDL enum. Your current build supports the 5 baseline presets.
+        </div>
+      `;
+      card.stats.textContent = `🔒 M154+ Only`;
+      return { latency: 0, tokens: 0, text: "" };
+    }
+
     try {
       card.stats.textContent = `Creating session (${p.name})...`;
       
@@ -3387,7 +3461,9 @@ async function runBenchmark() {
     };
   });
 
-  const promises = activePresets.map(async (presetId) => {
+  switchTab("stream");
+
+  for (const presetId of activePresets) {
     const res = await streamPreset(presetId, userPrompt, systemPrompt, cards[presetId], 0, isStreaming, isPlainTextOnly);
     
     // Accumulate into historical multi-sample array only if inference succeeded
@@ -3402,11 +3478,10 @@ async function runBenchmark() {
         entropy: 0,
         text: res.text
       });
+      // Incrementally update vocabulary and diversity metrics tab
+      updateMetricsTab();
     }
-  });
-
-  await Promise.all(promises);
-  updateMetricsTab();
+  }
   runBtn.disabled = false;
 }
 
@@ -3548,8 +3623,9 @@ async function runVarianceTest() {
 }
 
 // Master Initialization Function
-function initApp() {
+async function initApp() {
   initTheme();
+  await detectBrowserVersion();
   checkApiAvailability();
   renderSpectrum();
 
