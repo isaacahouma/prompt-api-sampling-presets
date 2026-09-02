@@ -1434,7 +1434,7 @@
           <span id="status-text">Detecting Prompt API Environment...</span>
         </div>
         <div class="status-badge" id="browser-version-pill" style="font-family:var(--font-mono); font-size:0.76rem; font-weight:600; background:var(--bg-secondary); border:1px solid var(--border-color); color:var(--text-main); display:none;">
-          <span id="browser-version-text">Detecting Chrome...</span>
+          <span id="browser-version-text">Detecting browser...</span>
         </div>
       </div>
       <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
@@ -1508,7 +1508,7 @@
           <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 4px;">
             <span style="font-size: 0.8rem; font-weight: 600;">Local Chromium Build:</span>
             <div class="cmd-bar">
-              <span id="cmd-chromium">/Users/iahouma/chrome/src/out/Default/Chromium.app/Contents/MacOS/Chromium --enable-blink-features=AIPromptAPI,AIPromptAPIParams https://isaacahouma.github.io/prompt-api-sampling-presets/</span>
+              <span id="cmd-chromium">$CHROMIUM_SRC/out/Default/Chromium.app/Contents/MacOS/Chromium --enable-blink-features=AIPromptAPI,AIPromptAPIParams https://isaacahouma.github.io/prompt-api-sampling-presets/</span>
               <button class="copy-btn" onclick="copyText('cmd-chromium')">Copy</button>
             </div>
           </div>
@@ -1877,7 +1877,7 @@
               <div>
                 <strong style="color: var(--text-main); font-size: 0.95rem;">💻 Canonical JavaScript Execution Snippet</strong>
                 <div style="font-size: 0.8rem; color: var(--text-muted);">
-                  Ready to copy and execute directly in your <strong>Chrome DevTools Console</strong> or web application.
+                  Ready to copy and execute directly in your <strong>browser DevTools Console</strong> or web application.
                 </div>
               </div>
               <div style="display: flex; gap: 10px; align-items: center;">
@@ -1925,7 +1925,7 @@
     </div>
     <div class="modal-body" style="gap: 14px;">
       <div style="font-size: 0.84rem; color: var(--text-muted); line-height: 1.5;">
-        This studio evaluates empirical repeatability and linguistic properties across on-device Chrome Prompt API sampling modes using quantitative formulations from computational linguistics and machine learning.
+        This studio evaluates empirical repeatability and linguistic properties across on-device Prompt API sampling modes using quantitative formulations from computational linguistics and machine learning.
       </div>
 
       <!-- Metric 1: Determinism -->
@@ -2042,7 +2042,7 @@
     <div class="modal-body">
       <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
         <div style="font-size:0.84rem; color:var(--text-muted);">
-          Copy and run directly in your <strong>Chrome DevTools Console</strong>:
+          Copy and run directly in your <strong>browser DevTools Console</strong>:
         </div>
         <button class="copy-btn" id="modal-copy-btn" onclick="copyModalCode()">📋 Copy Code</button>
       </div>
@@ -2346,7 +2346,7 @@ const flightSchema = {
   }
 
   const isExpanded = p.tier === "M154+ Expansion";
-  let versionNote = isExpanded ? `// NOTE: "${presetId}" requires Chrome 154+ (CL 8119572: 7-preset spectrum expansion).\n// In Chrome 151-153 baseline builds, WebIDL will throw a TypeError for this enum value.\n` : "";
+  let versionNote = isExpanded ? `// NOTE: "${presetId}" requires Chromium M154+ (CL 8119572: 7-preset spectrum expansion).\n// In Chromium M151-M153 baseline builds, WebIDL will throw a TypeError for this enum value.\n` : "";
 
   if (isStreaming) {
     return `${versionNote}// 1. Check model availability for "${presetId}" preset
@@ -2601,7 +2601,7 @@ function switchGuideBrowser(key) {
 
   const cmdChromium = document.getElementById("cmd-chromium");
   if (cmdChromium) {
-    cmdChromium.textContent = `/Users/iahouma/chrome/src/out/Default/Chromium.app/Contents/MacOS/Chromium --enable-blink-features=AIPromptAPI,AIPromptAPIParams ${currentUrl}`;
+    cmdChromium.textContent = `$CHROMIUM_SRC/out/Default/Chromium.app/Contents/MacOS/Chromium --enable-blink-features=AIPromptAPI,AIPromptAPIParams ${currentUrl}`;
   }
 
   document.querySelectorAll(".browser-tab-btn").forEach(btn => {
@@ -2691,7 +2691,7 @@ async function detectBrowserVersion() {
     const isBaseline = major < 154;
     pill.innerHTML = `🌐 <strong>${brandName} version ${fullVersion}</strong>`;
     pill.title = isBaseline 
-      ? `Active browser is ${brandName} version ${fullVersion} (Supports 5 baseline presets. Presets 'slightly-predictable' & 'slightly-creative' require Chrome 154+ / CL 8119572).`
+      ? `Active browser is ${brandName} version ${fullVersion} (Supports 5 baseline presets. Presets 'slightly-predictable' & 'slightly-creative' require Chromium M154+ / CL 8119572).`
       : `Active browser is ${brandName} version ${fullVersion} (Supports all 7 presets).`;
   } else {
     pill.style.display = "inline-flex";
@@ -2765,14 +2765,14 @@ async function checkApiAvailability() {
       let supportedModes = [];
 
       if (major >= 154) {
-        // Chrome 154+ (Canary / CL 8119572) supports all 7 presets
+        // Chromium M154+ (Canary / CL 8119572) supports all 7 presets
         supportedModes = PRESETS.map(p => p.id);
         // On 154+, enable all 7 presets by default if not yet modified
         if (selectedPresets.length === 5) {
           selectedPresets = PRESETS.map(p => p.id);
         }
       } else if (major > 0 && major < 154) {
-        // Chrome 151-153 (CL 7801217) strictly supports the 5 baseline presets
+        // Chromium M151-M153 (CL 7801217) strictly supports the 5 baseline presets
         supportedModes = ["most-predictable", "predictable", "balanced", "creative", "most-creative"];
         selectedPresets = selectedPresets.filter(id => supportedModes.includes(id));
       } else {
@@ -2859,7 +2859,7 @@ function updateVarianceSelect() {
     const p = PRESETS.find(x => x.id === opt.value);
     opt.disabled = isUnsupported;
     if (isUnsupported) {
-      opt.textContent = `${opt.value} — (Requires Chrome 154+ / CL 8119572)`;
+      opt.textContent = `${opt.value} — (Requires Chromium M154+ / CL 8119572)`;
     } else if (p) {
       opt.textContent = `${p.name} — ${p.semantic}`;
     }
@@ -2887,7 +2887,7 @@ function renderSpectrum() {
     if (isUnsupported) {
       card.style.opacity = "0.52";
       card.style.cursor = "not-allowed";
-      card.title = `${p.name}: Unsupported in this browser build (requires Chrome 154+ / CL 8119572)`;
+      card.title = `${p.name}: Unsupported in this browser build (requires Chromium M154+ / CL 8119572)`;
     }
 
     const badgeSpan = isUnsupported 
@@ -2931,7 +2931,7 @@ function renderSpectrum() {
     if (isUnsupported) {
       label.style.opacity = "0.45";
       label.style.cursor = "not-allowed";
-      label.title = `${p.name}: Unsupported in this browser build (requires Chrome 154+ / CL 8119572)`;
+      label.title = `${p.name}: Unsupported in this browser build (requires Chromium M154+ / CL 8119572)`;
     }
     label.innerHTML = `
       <input type="checkbox" value="${p.id}" ${isChecked ? 'checked' : ''} ${isUnsupported ? 'disabled' : ''}>
@@ -2959,14 +2959,14 @@ function renderSpectrum() {
     row.innerHTML = `
       <td style="padding: 10px 12px; font-family: var(--font-mono); color: ${isUnsupported ? 'var(--text-muted)' : p.color}; font-weight: 600; white-space: nowrap;">
         "${p.name}"
-        ${p.tier === 'M154+ Expansion' ? '<span style="font-size:0.65rem; padding:2px 6px; border-radius:4px; background:rgba(121,192,255,0.15); color:var(--accent-blue); font-weight:600; margin-left:6px; font-family:sans-serif;" title="Added in expanded spectrum (Chrome 154+ / CL 8119572)">M154+ Expansion</span>' : '<span style="font-size:0.65rem; padding:2px 6px; border-radius:4px; background:rgba(255,255,255,0.06); color:var(--text-muted); font-weight:500; margin-left:6px; font-family:sans-serif;" title="Canonical Baseline (Chrome 151+ / CL 7801217)">M151+ Baseline</span>'}
+        ${p.tier === 'M154+ Expansion' ? '<span style="font-size:0.65rem; padding:2px 6px; border-radius:4px; background:rgba(121,192,255,0.15); color:var(--accent-blue); font-weight:600; margin-left:6px; font-family:sans-serif;" title="Added in expanded spectrum (Chromium M154+ / CL 8119572)">M154+ Expansion</span>' : '<span style="font-size:0.65rem; padding:2px 6px; border-radius:4px; background:rgba(255,255,255,0.06); color:var(--text-muted); font-weight:500; margin-left:6px; font-family:sans-serif;" title="Canonical Baseline (Chromium M151+ / CL 7801217)">M151+ Baseline</span>'}
       </td>
       <td style="padding: 10px 12px; font-weight: 500;">${p.semantic}</td>
       <td style="padding: 10px 12px; color: var(--text-muted);">${p.desc}</td>
       <td style="padding: 10px 12px;">${p.useCase}</td>
       <td style="padding: 10px 12px; text-align: center;">
         ${isUnsupported ? `
-          <button class="btn-secondary" disabled style="padding: 3px 10px; font-size: 0.72rem; white-space: nowrap; opacity: 0.45; cursor: not-allowed;" title="Requires Chrome 154+ (CL 8119572)">
+          <button class="btn-secondary" disabled style="padding: 3px 10px; font-size: 0.72rem; white-space: nowrap; opacity: 0.45; cursor: not-allowed;" title="Requires Chromium M154+ (CL 8119572)">
             🔒 M154+ Only
           </button>
         ` : `
@@ -2985,7 +2985,7 @@ function renderSpectrum() {
 // 1-Click Interactive Navigation: Select preset, load archetype prompt, switch to Playground
 function applyAndTestPreset(presetId) {
   if (window.supportedSamplingModes && window.supportedSamplingModes.size > 0 && !window.supportedSamplingModes.has(presetId)) {
-    alert(`Preset "${presetId}" requires Chrome 154+ (CL 8119572). Your current browser build supports the 5 baseline presets.`);
+    alert(`Preset "${presetId}" requires Chromium M154+ (CL 8119572). Your current browser build supports the 5 baseline presets.`);
     return;
   }
   selectedPresets = [presetId];
@@ -3295,7 +3295,7 @@ async function streamPreset(presetId, userPrompt, systemPrompt, card, runIndex =
     if (window.supportedSamplingModes && window.supportedSamplingModes.size > 0 && !window.supportedSamplingModes.has(presetId)) {
       card.body.innerHTML = `
         <div style="padding: 14px; background: rgba(88, 166, 255, 0.08); border: 1px solid var(--border-color); border-radius: 8px; font-size: 0.82rem; line-height: 1.5; color: var(--text-main);">
-          <strong style="color: var(--accent-blue);">🔒 Preset Requires Chrome 154+ (CL 8119572)</strong><br>
+          <strong style="color: var(--accent-blue);">🔒 Preset Requires Chromium M154+ (CL 8119572)</strong><br>
           The preset <code>"${p.name}"</code> is part of the expanded 7-preset spectrum and is not present in this browser's WebIDL enum. Your current build supports the 5 baseline presets.
         </div>
       `;
@@ -3378,7 +3378,7 @@ async function streamPreset(presetId, userPrompt, systemPrompt, card, runIndex =
       
       let errorHtml = `<div style="padding: 12px; background: rgba(248, 81, 73, 0.1); border: 1px solid var(--accent-red); border-radius: 6px; color: var(--accent-red); font-size: 0.82rem; line-height: 1.5;">`;
       if (isTypeError && isEnumError) {
-        errorHtml += `<strong>❌ WebIDL TypeError:</strong><br><code>"${presetId}"</code> is not a valid enum value of <code>LanguageModelSamplingMode</code> in this browser build.<br><div style="font-size:0.75rem; color:var(--text-muted); margin-top:6px;">This preset was introduced in the 7-preset spectrum expansion (<a href="https://chromium-review.googlesource.com/c/chromium/src/+/8119572" target="_blank" style="color:var(--accent-blue);">CL 8119572</a> / Chrome 154+). Your current browser build implements the 5 baseline presets.</div>`;
+        errorHtml += `<strong>❌ WebIDL TypeError:</strong><br><code>"${presetId}"</code> is not a valid enum value of <code>LanguageModelSamplingMode</code> in this browser build.<br><div style="font-size:0.75rem; color:var(--text-muted); margin-top:6px;">This preset was introduced in the 7-preset spectrum expansion (<a href="https://chromium-review.googlesource.com/c/chromium/src/+/8119572" target="_blank" style="color:var(--accent-blue);">CL 8119572</a> / Chromium M154+). Your current browser build implements the 5 baseline presets.</div>`;
       } else {
         errorHtml += `<strong>❌ ${e.name || 'Error'}:</strong><br>${e.message || String(e)}`;
       }
