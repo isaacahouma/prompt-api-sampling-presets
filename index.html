@@ -216,6 +216,28 @@
       display: block;
     }
 
+    .browser-tab-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .browser-tab-btn:hover {
+      color: var(--text-main);
+      background: var(--bg-hover);
+    }
+    .browser-tab-btn.active {
+      background: var(--accent-blue);
+      color: #fff !important;
+      font-weight: 600;
+      border-color: var(--accent-blue);
+    }
+
     .activation-section-title {
       font-weight: 700;
       font-size: 0.9rem;
@@ -1425,16 +1447,24 @@
       </div>
     </div>
 
-    <!-- Collapsible 1-Click Activation & chrome://flags Guide -->
+    <!-- Collapsible 1-Click Activation & Browser Flags Guide -->
     <div class="activation-box" id="activation-guide-box">
-      <div class="activation-section-title">
-        🛠️ Chrome Built-in AI Activation Guide (Choose Method A or B)
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
+        <div class="activation-section-title" id="activation-guide-title" style="margin-bottom: 0;">
+          🛠️ Google Chrome Built-in AI Activation Guide (Choose Method A or B)
+        </div>
+        <div class="browser-selector-tabs" style="display: flex; gap: 6px; background: rgba(0,0,0,0.25); padding: 3px 6px; border-radius: 6px; border: 1px solid var(--border-color);">
+          <button type="button" class="browser-tab-btn active" data-browser="chrome" onclick="switchGuideBrowser('chrome')">🌐 Chrome</button>
+          <button type="button" class="browser-tab-btn" data-browser="edge" onclick="switchGuideBrowser('edge')">🌊 Edge</button>
+          <button type="button" class="browser-tab-btn" data-browser="brave" onclick="switchGuideBrowser('brave')">🦁 Brave</button>
+          <button type="button" class="browser-tab-btn" data-browser="opera" onclick="switchGuideBrowser('opera')">⭕ Opera</button>
+        </div>
       </div>
 
       <div class="activation-grid">
-        <!-- Method A: chrome://flags UI -->
+        <!-- Method A: Flags UI -->
         <div class="activation-col">
-          <strong style="color: var(--accent-blue);">Method A: Configure via <code>chrome://flags</code></strong>
+          <strong style="color: var(--accent-blue);">Method A: Configure via <code id="method-a-code">chrome://flags</code></strong>
           <ul class="flags-step-list">
             <li class="flags-step-item">
               <span><strong>1. Enable Prompt API Flag:</strong></span>
@@ -1453,7 +1483,7 @@
               <span style="color: var(--text-muted); font-size: 0.75rem;">Set to <strong>Enabled BypassPerfRequirement</strong>.</span>
             </li>
             <li class="flags-step-item">
-              <span><strong>3. Verify Model in <code>chrome://components</code>:</strong></span>
+              <span><strong>3. Verify Model in <code id="flag-components-code">chrome://components</code>:</strong></span>
               <div class="cmd-bar">
                 <span id="flag-components">chrome://components</span>
                 <button class="copy-btn" onclick="copyText('flag-components')">Copy URL</button>
@@ -1468,9 +1498,9 @@
           <strong style="color: var(--accent-purple);">Method B: Launch from Terminal with Command-Line Flags</strong>
           
           <div style="display: flex; flex-direction: column; gap: 4px;">
-            <span style="font-size: 0.8rem; font-weight: 600;">Chrome Canary / Dev:</span>
+            <span id="cmd-canary-label" style="font-size: 0.8rem; font-weight: 600;">Chrome Canary / Dev:</span>
             <div class="cmd-bar">
-              <span id="cmd-canary">/Applications/Google\ Chrome\ Canary.app/Contents/MacOS/Google\ Chrome\ Canary --enable-blink-features=AIPromptAPI,AIPromptAPIParams --enable-features=OptimizationGuideModelDownloading --optimization-guide-model-execution-override=1 file:///Users/iahouma/.gemini/jetski/brain/7a1d681d-edb1-4d59-99b3-b9afac02e2b4/sampling_mode_presets_demo.html</span>
+              <span id="cmd-canary">/Applications/Google\ Chrome\ Canary.app/Contents/MacOS/Google\ Chrome\ Canary --enable-blink-features=AIPromptAPI,AIPromptAPIParams --enable-features=OptimizationGuideModelDownloading --optimization-guide-model-execution-override=1 https://isaacahouma.github.io/prompt-api-sampling-presets/</span>
               <button class="copy-btn" onclick="copyText('cmd-canary')">Copy</button>
             </div>
           </div>
@@ -1478,7 +1508,7 @@
           <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 4px;">
             <span style="font-size: 0.8rem; font-weight: 600;">Local Chromium Build:</span>
             <div class="cmd-bar">
-              <span id="cmd-chromium">/Users/iahouma/chrome/src/out/Default/Chromium.app/Contents/MacOS/Chromium --enable-blink-features=AIPromptAPI,AIPromptAPIParams file:///Users/iahouma/.gemini/jetski/brain/7a1d681d-edb1-4d59-99b3-b9afac02e2b4/sampling_mode_presets_demo.html</span>
+              <span id="cmd-chromium">/Users/iahouma/chrome/src/out/Default/Chromium.app/Contents/MacOS/Chromium --enable-blink-features=AIPromptAPI,AIPromptAPIParams https://isaacahouma.github.io/prompt-api-sampling-presets/</span>
               <button class="copy-btn" onclick="copyText('cmd-chromium')">Copy</button>
             </div>
           </div>
@@ -2508,31 +2538,152 @@ function resolveLM() {
   return null;
 }
 
-// High-Precision Chrome Version Detection (User-Agent Client Hints + Fallback)
+const BROWSER_GUIDES = {
+  chrome: {
+    name: "Google Chrome",
+    scheme: "chrome://",
+    canaryLabel: "Chrome Canary / Dev:",
+    canaryPath: "/Applications/Google\\ Chrome\\ Canary.app/Contents/MacOS/Google\\ Chrome\\ Canary"
+  },
+  edge: {
+    name: "Microsoft Edge",
+    scheme: "edge://",
+    canaryLabel: "Microsoft Edge Canary / Dev:",
+    canaryPath: "/Applications/Microsoft\\ Edge\\ Canary.app/Contents/MacOS/Microsoft\\ Edge\\ Canary"
+  },
+  brave: {
+    name: "Brave Browser",
+    scheme: "brave://",
+    canaryLabel: "Brave Browser Nightly / Dev:",
+    canaryPath: "/Applications/Brave\\ Browser\\ Nightly.app/Contents/MacOS/Brave\\ Browser\\ Nightly"
+  },
+  opera: {
+    name: "Opera",
+    scheme: "opera://",
+    canaryLabel: "Opera Developer:",
+    canaryPath: "/Applications/Opera\\ Developer.app/Contents/MacOS/Opera\\ Developer"
+  }
+};
+
+function switchGuideBrowser(key) {
+  const guide = BROWSER_GUIDES[key] || BROWSER_GUIDES.chrome;
+  const currentUrl = (typeof window !== "undefined" && window.location && window.location.href && !window.location.href.startsWith("file:"))
+    ? window.location.href
+    : "https://isaacahouma.github.io/prompt-api-sampling-presets/";
+
+  const titleEl = document.getElementById("activation-guide-title");
+  if (titleEl) {
+    titleEl.innerHTML = `🛠️ ${guide.name} Built-in AI Activation Guide (Choose Method A or B)`;
+  }
+
+  const methodACode = document.getElementById("method-a-code");
+  if (methodACode) methodACode.textContent = `${guide.scheme}flags`;
+
+  const flagPrompt = document.getElementById("flag-prompt");
+  if (flagPrompt) flagPrompt.textContent = `${guide.scheme}flags/#prompt-api-for-gemini-nano`;
+
+  const flagOptguide = document.getElementById("flag-optguide");
+  if (flagOptguide) flagOptguide.textContent = `${guide.scheme}flags/#optimization-guide-on-device-model`;
+
+  const flagCompCode = document.getElementById("flag-components-code");
+  if (flagCompCode) flagCompCode.textContent = `${guide.scheme}components`;
+
+  const flagComponents = document.getElementById("flag-components");
+  if (flagComponents) flagComponents.textContent = `${guide.scheme}components`;
+
+  const canaryLabel = document.getElementById("cmd-canary-label");
+  if (canaryLabel) canaryLabel.textContent = guide.canaryLabel;
+
+  const cmdCanary = document.getElementById("cmd-canary");
+  if (cmdCanary) {
+    cmdCanary.textContent = `${guide.canaryPath} --enable-blink-features=AIPromptAPI,AIPromptAPIParams --enable-features=OptimizationGuideModelDownloading --optimization-guide-model-execution-override=1 ${currentUrl}`;
+  }
+
+  const cmdChromium = document.getElementById("cmd-chromium");
+  if (cmdChromium) {
+    cmdChromium.textContent = `/Users/iahouma/chrome/src/out/Default/Chromium.app/Contents/MacOS/Chromium --enable-blink-features=AIPromptAPI,AIPromptAPIParams ${currentUrl}`;
+  }
+
+  document.querySelectorAll(".browser-tab-btn").forEach(btn => {
+    if (btn.getAttribute("data-browser") === key) {
+      btn.classList.add("active");
+    } else {
+      btn.classList.remove("active");
+    }
+  });
+}
+
+// High-Precision Multi-Browser Detection (User-Agent Client Hints + Fallback)
 async function detectBrowserVersion() {
   let fullVersion = "";
-  let brandName = "Chrome";
+  let brandName = "Google Chrome";
+  let detectedBrowserKey = "chrome";
+
+  const ua = navigator.userAgent || "";
+  const isEdge = ua.includes("Edg/") || ua.includes("Edge/");
+  const isOpera = ua.includes("OPR/") || ua.includes("Opera/");
+  const isBrave = (typeof navigator.brave !== "undefined" && typeof navigator.brave.isBrave === "function");
 
   if (navigator.userAgentData && typeof navigator.userAgentData.getHighEntropyValues === "function") {
     try {
       const data = await navigator.userAgentData.getHighEntropyValues(["fullVersionList"]);
-      const chromeBrand = (data.fullVersionList || []).find(b => b.brand === "Google Chrome" || b.brand === "Chromium");
-      if (chromeBrand) {
-        fullVersion = chromeBrand.version;
-        brandName = chromeBrand.brand === "Google Chrome" ? "Google Chrome" : "Chromium";
+      const list = data.fullVersionList || [];
+      const edgeEntry = list.find(b => b.brand.includes("Edge") || b.brand.includes("Microsoft Edge"));
+      const operaEntry = list.find(b => b.brand.includes("Opera"));
+      const chromeEntry = list.find(b => b.brand === "Google Chrome");
+      const chromiumEntry = list.find(b => b.brand === "Chromium");
+
+      if (edgeEntry || isEdge) {
+        detectedBrowserKey = "edge";
+        brandName = "Microsoft Edge";
+        fullVersion = edgeEntry?.version || "";
+      } else if (operaEntry || isOpera) {
+        detectedBrowserKey = "opera";
+        brandName = "Opera";
+        fullVersion = operaEntry?.version || "";
+      } else if (isBrave) {
+        detectedBrowserKey = "brave";
+        brandName = "Brave";
+        fullVersion = chromeEntry?.version || chromiumEntry?.version || "";
+      } else if (chromeEntry) {
+        detectedBrowserKey = "chrome";
+        brandName = "Google Chrome";
+        fullVersion = chromeEntry.version;
+      } else if (chromiumEntry) {
+        detectedBrowserKey = "chrome";
+        brandName = "Chromium";
+        fullVersion = chromiumEntry.version;
       }
     } catch (e) {}
   }
 
   if (!fullVersion) {
-    const uaMatch = navigator.userAgent.match(/(?:Chrome|Chromium)\/([0-9.]+)/);
-    if (uaMatch) {
-      fullVersion = uaMatch[1];
+    if (isEdge) {
+      detectedBrowserKey = "edge";
+      brandName = "Microsoft Edge";
+      const m = ua.match(/Edg\/([0-9.]+)/);
+      if (m) fullVersion = m[1];
+    } else if (isOpera) {
+      detectedBrowserKey = "opera";
+      brandName = "Opera";
+      const m = ua.match(/OPR\/([0-9.]+)/);
+      if (m) fullVersion = m[1];
+    } else if (isBrave) {
+      detectedBrowserKey = "brave";
+      brandName = "Brave";
+      const m = ua.match(/Chrome\/([0-9.]+)/);
+      if (m) fullVersion = m[1];
+    } else {
+      const m = ua.match(/(?:Chrome|Chromium)\/([0-9.]+)/);
+      if (m) fullVersion = m[1];
     }
   }
 
+  // Auto-switch guide to detected browser
+  switchGuideBrowser(detectedBrowserKey);
+
   const pill = document.getElementById("browser-version-pill");
-  if (!pill) return { fullVersion, brandName };
+  if (!pill) return { fullVersion, brandName, detectedBrowserKey };
 
   if (fullVersion) {
     pill.style.display = "inline-flex";
@@ -2545,9 +2696,10 @@ async function detectBrowserVersion() {
   } else {
     pill.style.display = "inline-flex";
     pill.innerHTML = `🌐 <strong>Browser: Non-Chromium</strong>`;
+    pill.title = "Non-Chromium browser detected. Prompt API requires Chromium M151+ with Gemini Nano enabled.";
   }
 
-  return { fullVersion, brandName };
+  return { fullVersion, brandName, detectedBrowserKey };
 }
 
 // Check Environment Diagnostics
