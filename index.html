@@ -485,9 +485,11 @@
       opacity: 0.9;
     }
 
-    button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
+    button:disabled,
+    button[disabled] {
+      opacity: 0.45 !important;
+      cursor: not-allowed !important;
+      filter: grayscale(0.6);
     }
 
     button.btn-secondary {
@@ -1564,7 +1566,7 @@
       </div>
 
       <div class="btn-group">
-        <button id="run-benchmark-btn" style="flex: 1;">
+        <button id="run-benchmark-btn" style="flex: 1;" disabled title="Checking Prompt API availability...">
           <svg width="15" height="15" fill="currentColor" viewBox="0 0 16 16"><path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/></svg>
           Run Comparison
         </button>
@@ -1625,7 +1627,7 @@
               </select>
             </div>
 
-            <button id="run-variance-btn" style="height: 38px;">
+            <button id="run-variance-btn" style="height: 38px;" disabled title="Checking Prompt API availability...">
               <svg width="15" height="15" fill="currentColor" viewBox="0 0 16 16"><path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z"/><path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"/></svg>
               Run Repeatability Test
             </button>
@@ -2506,155 +2508,6 @@ function resolveLM() {
   return null;
 }
 
-// Multi-Line Scannable Curated Text Generator across all sampling modes
-function getPresetText(presetId, userPrompt, systemPrompt, runIndex = 0, isPlainTextOnly = true) {
-  const pLower = (userPrompt || "").toLowerCase();
-  let result = "";
-
-  // 1. Tagline & Feature Bullets: Solar Cargo Airship
-  if (pLower.includes("airship") || pLower.includes("cargo") || (pLower.includes("tagline") && pLower.includes("island"))) {
-    const map = {
-      "most-predictable": `Silent Wings: Zero-Emission Freight Across Remote Archipelagos.\n• 100% solar-electric propulsion with zero carbon footprint\n• Heavy-lift helium hull engineered for rough ocean crosswinds\n• Direct-to-shore landing requiring no paved runway infrastructure`,
-      "predictable": `Connecting Isolated Islands with Silent Solar Freight.\n• High-efficiency photovoltaic skin providing perpetual daytime lift\n• 15-ton payload capacity optimized for perishable supplies\n• Precision vertical landing on unpaved beaches and reefs`,
-      "slightly-predictable": `Clean Skies, Connected Shores: Next-Generation Island Cargo.\n• Whisper-quiet hybrid solar engines protecting coastal wildlife\n• Autonomous waypoint navigation with real-time maritime telemetry\n• 40% reduction in inter-island freight logistics costs`,
-      "balanced": `Silent Giants of the Sky: Clean Cargo for Remote Horizons.\n• Ultra-lightweight carbon composite airframe powered by sun and wind\n• Day-and-night endurance batteries for continuous maritime routes\n• Eliminating diesel barge dependence across archipelagos`,
-      "slightly-creative": `Riding the Pacific Breeze: The Solar Freight Revolution.\n• Sun-harvesting envelope gliding soundlessly over turquoise lagoons\n• Rapid-deploy container system delivering medical and agricultural cargo\n• A lifeline for remote atolls where traditional cargo ships cannot dock`,
-      "creative": `Whales of the Upper Atmosphere: Clean Trade on Solar Currents.\n• Gliding silently above storm surges on endless solar thermal thermals\n• Bringing vital trade to forgotten islands with the grace of a sailing ship\n• Zero runway, zero emissions, infinite coastal reach`,
-      "most-creative": `Sailing the Sun-Drenched Ether: Ocean Freight Reborn in Clouds.\n• Luminous solar envelopes dancing soundlessly across tropical trade winds\n• Bypassing deep-water ports to drop essential cargo straight into island sands\n• The quietest bridge between isolated shores and global commerce`
-    };
-    if (runIndex > 0 && presetId !== "most-predictable") {
-      const vars = [
-        `Sun-Powered Lifelines Across the Pacific.\n• Silent helium cruisers built for isolated reef communities\n• 10-ton clean cargo bay with rapid roll-on roll-off access\n• Zero emissions, zero engine noise, total archipelago access`,
-        `The Green Highway Above the Waves.\n• Solar-electric airships delivering essential freight without port docks\n• Resilient aerodynamic hull handling unpredictable tropical storms\n• Sustainable logistics for ocean-bound communities`
-      ];
-      result = vars[(runIndex - 1) % vars.length];
-    } else {
-      result = map[presetId] || map["balanced"];
-    }
-  }
-
-  // 2. Diplomatic Crisis Email: Architectural Blueprint Rejection
-  else if (pLower.includes("blueprint") || pLower.includes("architectural") || pLower.includes("30 minutes") || pLower.includes("crisis")) {
-    const map = {
-      "most-predictable": `Subject: Urgent: Blueprint Review & Client Alignment Meeting\n\nHi team,\nThe client has requested an urgent review of the updated architectural blueprints within the next 30 minutes. Let us convene immediately to consolidate our technical revisions and address their key concerns.`,
-      "predictable": `Subject: Action Required: Client Feedback on Architectural Blueprint\n\nGood morning all,\nThe client has requested an emergency sync in 30 minutes regarding the latest architectural blueprint revisions. Please join the bridge link so we can review the flagged items together beforehand.`,
-      "slightly-predictable": `Subject: Priority Touchpoint: Client Blueprint Feedback & Next Steps\n\nHi team,\nWe just received urgent feedback on the architectural plans, and the client would like a quick sync in 30 minutes. Let's huddle right now to ensure our response is cohesive and constructive.`,
-      "balanced": `Subject: Quick Alignment: Addressing Client Blueprint Notes\n\nHi team,\nThe client reached out with immediate feedback on the blueprint and requested a 30-minute turn-around discussion. Let's jump on a quick prep call to coordinate our technical rationale and next steps.`,
-      "slightly-creative": `Subject: Client Blueprint Check-in: Aligning Ahead of Our Sync\n\nHi everyone,\nThe client has requested an emergency walkthrough of the architectural schematics in 30 minutes. Let's gather for 5 minutes beforehand so we can present clear, calm solutions to their design notes.`,
-      "creative": `Subject: Blueprint Strategy: Turning Client Feedback into Clear Action\n\nHey team,\nOur client wants an emergency sync in 30 minutes to walk through their blueprint concerns. Let's take a quick breath, review their feedback, and guide them through our design adjustments with total clarity.`,
-      "most-creative": `Subject: Steering the Blueprint Vision: Quick Prep for Today's Client Sync\n\nHi all,\nAn urgent revision request just came in from the client for a discussion in 30 minutes. Let's synchronize our technical insights now so we turn their critique into an opportunity for a stronger design!`
-    };
-    result = map[presetId] || map["balanced"];
-  }
-
-  // 3. Multi-Aspect Sentiment & Friction: Cracked Ceramic Set
-  else if (pLower.includes("ceramic") || pLower.includes("espresso set") || pLower.includes("cracked") || pLower.includes("handwritten")) {
-    const map = {
-      "most-predictable": `• Primary Sentiment: Positive (Net Promoter Score: High)\n• Customer Friction: Product transit damage (shattered ceramic set on arrival).\n• Resolution Impact: Rapid proactive replacement + personalized handwritten note and gift converted shipping failure into brand advocacy.`,
-      "predictable": `• Primary Sentiment: Highly Positive & Delighted\n• Customer Friction: Packaging failure resulting in broken ceramics upon delivery.\n• Resolution Impact: Overnighted replacement accompanied by humanized customer care successfully eliminated customer frustration.`,
-      "slightly-predictable": `• Primary Sentiment: Resilient Loyalty (Relieved & Impressed)\n• Customer Friction: Acute initial disappointment from damaged fragile goods.\n• Resolution Impact: Exceptional service recovery speed and high-touch thoughtful gesture (artisan beans) exceeded customer expectations.`,
-      "balanced": `• Primary Sentiment: Grateful Brand Champion\n• Customer Friction: Broken delicate item during freight transit.\n• Resolution Impact: Turning an operational shipping flaw into an emotional connection through immediate replacement and personal empathy.`,
-      "slightly-creative": `• Primary Sentiment: Enthusiastic Gratitude\n• Customer Friction: Heartbreak of unboxing shattered artisan craftsmanship.\n• Resolution Impact: Masterclass in service recovery—genuine human touch and complimentary artisan gift fostered lifelong brand goodwill.`,
-      "creative": `• Primary Sentiment: Redemptive Delight\n• Customer Friction: The sting of shattered pottery replaced by unboxing joy.\n• Resolution Impact: Swift, warm-hearted support turned a logistics nightmare into an unforgettable customer testimonial.`,
-      "most-creative": `• Primary Sentiment: Golden Kintsugi Goodwill\n• Customer Friction: Fragile parcel tragedy turned into an elevated customer romance.\n• Resolution Impact: Lightning-fast empathy and unexpected artisan gifts repaired not just the coffee set, but solidified absolute brand devotion.`
-    };
-    result = map[presetId] || map["balanced"];
-  }
-
-  // 4. Logic Riddle: Parallel Production Rate
-  else if (pLower.includes("widgets") || pLower.includes("machines make")) {
-    const map = {
-      "most-predictable": `Step 1: 5 machines produce 5 widgets in 5 minutes -> 1 machine makes 1 widget in 5 minutes.\nStep 2: 100 machines working simultaneously will produce 100 widgets in the same time.\nAnswer: Exactly 5 minutes.`,
-      "predictable": `1. Production Rate: Each machine takes 5 minutes to complete one full widget.\n2. Scaling: 100 machines running in parallel will each produce 1 widget concurrently.\nAnswer: 5 minutes.`,
-      "slightly-predictable": `• Unit Rate: 1 machine = 1 widget per 5 minutes.\n• Parallel Processing: 100 machines produce 100 widgets concurrently.\n• Final Answer: 5 minutes.`,
-      "balanced": `• Baseline: 1 machine produces 1 widget every 5 minutes.\n• Parallel execution: 100 machines yield 100 widgets without increasing individual run duration.\n• Result: 5 minutes flat.`,
-      "slightly-creative": `• Analysis: Machines operate in parallel rather than sequentially.\n• Throughput: 100 machines finish 100 widgets at the exact same moment.\n• Solution: Still just 5 minutes!`,
-      "creative": `• The Trap: Thinking more widgets takes linearly longer.\n• Reality: 100 parallel workers produce 100 units in their standard 5-minute cycle.\n• Verdict: 5 minutes.`,
-      "most-creative": `• Insight: Parallelism scales quantity, not time.\n• 100 machines synchronized in harmony complete 100 widgets in their natural 5-minute pulse.\n• Total Time: 5 minutes flat.`
-    };
-    result = map[presetId] || map["balanced"];
-  }
-
-  // 5. JSON Flight Itinerary Schema (Strictly adhering to FLIGHT_SCHEMA across all presets via responseConstraint)
-  else if (pLower.includes("json") || pLower.includes("flight") || pLower.includes("ac840") || pLower.includes("vancouver")) {
-    const flightJson = `{\n  "flight": "AC840",\n  "origin": "Vancouver (YVR)",\n  "destination": "London Heathrow (LHR)",\n  "status": "ON TIME",\n  "gate": "42B",\n  "priceUsd": 840\n}`;
-    result = flightJson;
-  }
-
-  // 6. Regex Validation Code
-  else if (pLower.includes("regex") || pLower.includes("24-hour")) {
-    const map = {
-      "most-predictable": `/** Validates 24-hour time string in HH:MM format */\nconst TIME_REGEX = /^(?:[01]\\d|2[0-3]):[0-5]\\d$/;\nconst isValidTime = (t) => TIME_REGEX.test(t);`,
-      "predictable": `// Matches 00:00 to 23:59 with strict boundary checks\nconst time24hRegex = /^(?:[01]\\d|2[0-3]):[0-5]\\d$/;\nexport const validateTime = (str) => time24hRegex.test(str);`,
-      "slightly-predictable": `/**\n * Tests if string is valid 24h military time (00:00 - 23:59)\n */\nconst isValid24h = (str) => /^([01][0-9]|2[0-3]):[0-5][0-9]$/.test(str);`,
-      "balanced": `// 24-Hour Time Pattern (HH:MM)\nconst TIME_PATTERN = /^(?:0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/;\nfunction checkTime(val) {\n  return TIME_PATTERN.test(val.trim());\n}`,
-      "slightly-creative": `/** Validates strict 24h clock strings from 00:00 to 23:59 */\nconst isMilitaryTime = (val) => /^(?:[01]?\\d|2[0-3]):[0-5]\\d$/.test(val);`,
-      "creative": `// Comprehensive 24h clock validator (00:00 - 23:59)\nconst REGEX_24H = /^(?:[01]\\d|2[0-3]):[0-5]\\d$/;\nconst isValidTime = (input) => typeof input === 'string' && REGEX_24H.test(input);`,
-      "most-creative": `/** Robust 24-hour ISO time matcher */\nconst VALID_24H = /^(?:[01]\\d|2[0-3]):[0-5]\\d$/;\nconst parseTime = (str) => VALID_24H.test(String(str).trim());`
-    };
-    result = map[presetId] || map["balanced"];
-  }
-
-  // 7. 3-Line Tactile Metaphor Poem: Radio Frequency
-  else if (pLower.includes("radio") || pLower.includes("frequency") || pLower.includes("acoustics") || pLower.includes("poem")) {
-    const map = {
-      "most-predictable": `A copper needle dragging through dust,\nCatching the hum of abandoned voices,\nVibrating cold against the receiver wire.`,
-      "predictable": `Static coats the vacuum tube like winter frost,\nWhere a forgotten melody uncoils in the dark,\nA copper spine shivering with electric ghosts.`,
-      "slightly-predictable": `A thread of rusted wire drawn taut across silence,\nHumming with the warmth of a departed station,\nScattered like iron filings across the night.`,
-      "balanced": `An attic antenna brushing against the cold ionosphere,\nSifting through decades of velvet static,\nTo pull a single warm heartbeat from the ether.`,
-      "slightly-creative": `An empty dial spinning over glass and shadow,\nWhere lost broadcast frequencies gather like cobwebs,\nWaiting for a copper finger to stroke them awake.`,
-      "creative": `A ghost ship trapped in phosphor and copper coils,\nWhose whistle echoes through the crackling salt of static,\nDrowning in the silent ocean between two frequencies.`,
-      "most-creative": `A rusted tuning capacitor asleep under moss,\nHumming a forgotten lullaby into the throat of the dark,\nWhere yesterday's radio waves still drift like radioactive snowfall.`
-    };
-    result = map[presetId] || map["balanced"];
-  }
-
-  // 8. Seville Butcher Micro-Thriller (Suspense Hook)
-  else if (pLower.includes("butcher") || pLower.includes("seville") || pLower.includes("jamón") || pLower.includes("greenhouse")) {
-    const map = {
-      "most-predictable": `Behind three heavy rows of curing Ibérico pork, Mateo unlocked the reinforced freezer door that concealed his basement hydroponic greenhouse.\nWiping his cleaver clean on his apron, he checked the automated grow lights shielding his heirloom tomatoes from the neighborhood guild.`,
-      "predictable": `The heavy freezer door sealed with a frosty hiss, muffling the bustling Seville market outside as he stepped into a warm, emerald sanctuary of basil and vines.\nWhen an unexpected knock rattled the front counter, he carefully hid the pruning shears behind a slab of salted beef and reached for his carving knife.`,
-      "slightly-predictable": `To the guild, he was the city's most respected fifth-generation butcher; behind the sub-zero curing locker, he was an outlaw botanist breathing stolen soil.\nAs footsteps approached the back corridor, he wiped damp fertilizer from his fingers and stepped out onto the bloodstained sawdust floor.`,
-      "balanced": `The butcher shop reeked of salt, iron, and curing fat, but behind the stainless steel racks lay a secret greenhouse fragrant with sunlit rosemary and damp peat.\nHe knew that if the inspection team discovered what was truly growing beneath the meat hooks, thirty years of family reputation would vanish before sunrise.`,
-      "slightly-creative": `Under the cold fluorescence of hanging carcasses, he wiped crimson brine from his hands and slipped through the hidden partition into a tropical burst of clandestine chlorophyll.\nHe had buried forty heirloom tomato varieties where the city inspectors only ever searched for cured ham.`,
-      "creative": `His apron bore the iron stains of his daytime craft, but in the secret damp warmth behind the carcass hooks, his calloused fingers tenderly pruned blossoming nightshade.\nWhen the health tribunal banged on the iron shutters at midnight, the scent of crushed mint gave him away before the bolt could slide shut.`,
-      "most-creative": `In a cathedral of salted ribs and hanging shadow, he was Seville's most devoted carnivore—until the sub-zero locker swung open to reveal a glowing jungle of forbidden heirloom fruit.\nEvery cleaver stroke in the front room was merely acoustic camouflage to drown out the hum of his illegal basement grow lights.`
-    };
-    result = map[presetId] || map["balanced"];
-  }
-
-  // 9. Translation & Cultural Nuance: Goalkeeper Stoppage Time Save
-  else if (pLower.includes("goalkeeper") || pLower.includes("stoppage") || pLower.includes("save") || pLower.includes("spanish")) {
-    const map = {
-      "most-predictable": `Traducción:\n"El guardameta realizó una parada milagrosa en los últimos segundos del tiempo de descuento."\n\nNota de matiz: "Tiempo de descuento" es el término reglamentario y estándar para referirse a los minutos añadidos al final del encuentro.`,
-      "predictable": `Traducción:\n"El portero sacó una mano providencial en los instantes finales del tiempo añadido."\n\nNota de matiz: "Mano providencial" refleja con precisión la épica del momento deportivo sin perder naturalidad periodística.`,
-      "slightly-predictable": `Traducción:\n"El arquero firmó una atajada heroica en el último suspiro del tiempo de compensación."\n\nNota de matiz: "Atajada" y "tiempo de compensación" son las expresiones idiomáticas preferidas en la crónica deportiva latinoamericana.`,
-      "balanced": `Traducción:\n"El portero obró el milagro con una estirada salvadora cuando el partido agonizaba en el descuento."\n\nNota de matiz: "Estirada salvadora" aporta gran dinamismo visual y transmite la angustia del desenlace.`,
-      "slightly-creative": `Traducción:\n"Bajo los palos, el guardameta se vistió de héroe con una intervención colosal en la última jugada del añadido."\n\nNota de matiz: "Se vistió de héroe" capta vívidamente la narrativa emocional del fútbol hispanohablante.`,
-      "creative": `Traducción:\n"El cancerbero rozó la gloria al sacar un balón imposible sobre la bocina en un descuento de infarto."\n\nNota de matiz: "Cancerbero" y "descuento de infarto" enriquecen la crónica con un registro apasionado de alta tensión.`,
-      "most-creative": `Traducción:\n"Un vuelo sobrehumano del arquero blindó la victoria en el último latido de un tiempo extra taquicárdico."\n\nNota de matiz: Metáfora poética de alto impacto lírico reservada para finales de campeonato inolvidables.`
-    };
-    result = map[presetId] || map["balanced"];
-  }
-
-  // Fallback multi-line response
-  else {
-    const cleanPrompt = userPrompt || "the prompt";
-    const map = {
-      "most-predictable": `• Evaluation: "${cleanPrompt}"\n• Sampling Mode: most-predictable \n• Characteristics: Strict deterministic accuracy, identical repeatability.`,
-      "predictable": `• Analysis: "${cleanPrompt}"\n• Sampling Mode: predictable \n• Characteristics: Factual grounding with minimal stylistic deviation.`,
-      "slightly-predictable": `• Synthesis: "${cleanPrompt}"\n• Sampling Mode: slightly-predictable \n• Characteristics: Controlled variance with high structural clarity.`,
-      "balanced": `• Reflection: "${cleanPrompt}"\n• Sampling Mode: balanced \n• Characteristics: Well-rounded conversational prose for general use.`,
-      "slightly-creative": `• Exploration: "${cleanPrompt}"\n• Sampling Mode: slightly-creative \n• Characteristics: Expressive vocabulary with rhythmic phrasing.`,
-      "creative": `• Perspective: "${cleanPrompt}"\n• Sampling Mode: creative \n• Characteristics: Rich narrative angles, metaphors, and imaginative flow.`,
-      "most-creative": `• Vision: "${cleanPrompt}"\n• Sampling Mode: most-creative \n• Characteristics: Maximum entropy sampling with unconventional vocabulary exploration.`
-    };
-    result = map[presetId] || map["balanced"];
-  }
-
-  return isPlainTextOnly ? sanitizePlainText(result) : result;
-}
-
 // High-Precision Chrome Version Detection (User-Agent Client Hints + Fallback)
 async function detectBrowserVersion() {
   let fullVersion = "";
@@ -2707,8 +2560,28 @@ async function checkApiAvailability() {
   const resolved = resolveLM();
 
   if (!resolved) {
-    dot.className = "status-dot blue";
-    text.innerHTML = `● <strong>Built-in AI Preview Active</strong> (To bind live Gemini Nano on-device, click <em>Setup & Flags Guide</em>)`;
+    dot.className = "status-dot red";
+    text.innerHTML = `⚠️ <strong>Prompt API Unavailable</strong> (<code>window.LanguageModel</code> not detected)`;
+    const runBtn = document.getElementById("run-benchmark-btn");
+    if (runBtn) {
+      runBtn.disabled = true;
+      runBtn.title = "Prompt API (window.LanguageModel) is not available in this browser.";
+    }
+    const varBtn = document.getElementById("run-variance-btn");
+    if (varBtn) {
+      varBtn.disabled = true;
+      varBtn.title = "Prompt API (window.LanguageModel) is not available in this browser.";
+    }
+    const container = document.getElementById("results-cards-container");
+    if (container) {
+      container.innerHTML = `
+        <div style="color: var(--text-muted); font-size: 0.9rem; padding: 40px; text-align: center; border: 1px dashed var(--border-color); border-radius: 8px; grid-column: 1 / -1; line-height: 1.6;">
+          <strong style="color: var(--accent-red); font-size: 1rem;">⚠️ Prompt API (<code>window.LanguageModel</code>) is not available in this browser.</strong><br><br>
+          This studio requires native on-device Prompt API execution (e.g. Chrome M151+ with Gemini Nano enabled).<br>
+          Click <strong>🚀 Setup &amp; Flags Guide</strong> above for activation instructions.
+        </div>
+      `;
+    }
     return;
   }
 
@@ -2721,7 +2594,18 @@ async function checkApiAvailability() {
       availability = caps.available || "readily";
     }
 
+    const runBtn = document.getElementById("run-benchmark-btn");
+    const varBtn = document.getElementById("run-variance-btn");
+
     if (availability === "readily" || availability === "available" || availability === "readily-available") {
+      if (runBtn) {
+        runBtn.disabled = false;
+        runBtn.title = "Run comparison benchmark across active presets";
+      }
+      if (varBtn) {
+        varBtn.disabled = false;
+        varBtn.title = "Run repeatability test on selected preset";
+      }
       dot.className = "status-dot green";
       const major = parseInt((fullVersion || "").split('.')[0], 10) || 0;
       let supportedModes = [];
@@ -2756,17 +2640,57 @@ async function checkApiAvailability() {
       updateVarianceSelect();
 
       text.innerHTML = `● <strong>LanguageModel Ready</strong>`;
+    } else if (availability === "no") {
+      if (runBtn) {
+        runBtn.disabled = true;
+        runBtn.title = "Prompt API is disabled or unavailable on this device (availability returned 'no').";
+      }
+      if (varBtn) {
+        varBtn.disabled = true;
+        varBtn.title = "Prompt API is disabled or unavailable on this device (availability returned 'no').";
+      }
+      dot.className = "status-dot red";
+      text.innerHTML = `⚠️ <strong>Prompt API Disabled</strong> (Model availability: "no")`;
+      const container = document.getElementById("results-cards-container");
+      if (container) {
+        container.innerHTML = `
+          <div style="color: var(--text-muted); font-size: 0.9rem; padding: 40px; text-align: center; border: 1px dashed var(--border-color); border-radius: 8px; grid-column: 1 / -1; line-height: 1.6;">
+            <strong style="color: var(--accent-red); font-size: 1rem;">⚠️ Prompt API model availability returned "no".</strong><br><br>
+            The on-device model is disabled or not available on this device.<br>
+            Click <strong>🚀 Setup &amp; Flags Guide</strong> above for activation instructions.
+          </div>
+        `;
+      }
+      guide.classList.add("show");
     } else if (availability === "after-download" || availability === "downloadable") {
+      if (runBtn) {
+        runBtn.disabled = true;
+        runBtn.title = "Gemini Nano model is downloading. Check progress in chrome://components.";
+      }
+      if (varBtn) {
+        varBtn.disabled = true;
+        varBtn.title = "Gemini Nano model is downloading. Check progress in chrome://components.";
+      }
       dot.className = "status-dot yellow";
       text.innerHTML = `⏳ <strong>Gemini Nano Downloading...</strong> (Check status in <code>chrome://components</code>)`;
       guide.classList.add("show");
     } else {
       dot.className = "status-dot blue";
-      text.innerHTML = `● <strong>Prompt API Ready</strong> (${resolved.type})`;
+      text.innerHTML = `● <strong>Prompt API Status: ${availability}</strong>`;
     }
   } catch (e) {
-    dot.className = "status-dot green";
-    text.innerHTML = `● <strong>LanguageModel Connected</strong> (${resolved.type})`;
+    const runBtn = document.getElementById("run-benchmark-btn");
+    const varBtn = document.getElementById("run-variance-btn");
+    if (runBtn) {
+      runBtn.disabled = true;
+      runBtn.title = `Prompt API Error: ${e.message || e}`;
+    }
+    if (varBtn) {
+      varBtn.disabled = true;
+      varBtn.title = `Prompt API Error: ${e.message || e}`;
+    }
+    dot.className = "status-dot red";
+    text.innerHTML = `⚠️ <strong>Prompt API Error</strong> (${e.message || e})`;
   }
 }
 
@@ -3312,31 +3236,23 @@ async function streamPreset(presetId, userPrompt, systemPrompt, card, runIndex =
     }
   }
 
-  // 2. High-Fidelity Client-Side Preview (ONLY used when browser completely lacks LanguageModel, e.g. non-flagged browser)
-  fullText = getPresetText(presetId, userPrompt, systemPrompt, runIndex, isPlainTextOnly);
-
-  if (!isStreaming) {
-    updateLiveDisplay(card, fullText, false, p, startTime);
-  } else {
-    const tokens = fullText.split(/(\s+)/);
-    let accumulated = "";
-
-    for (let i = 0; i < tokens.length; i++) {
-      accumulated += tokens[i];
-      updateLiveDisplay(card, accumulated, false, p, startTime);
-      const delay = tokens[i].trim().length > 0 ? (Math.floor(Math.random() * 20) + 30) : 10;
-      await new Promise(r => setTimeout(r, delay));
-    }
-  }
-
-  const durationSec = (performance.now() - startTime) / 1000;
-  const tokenCount = fullText.split(/\s+/).filter(Boolean).length;
-  updateLiveDisplay(card, fullText, true, p, startTime);
-  return { latency: Math.max(durationSec, 0.05), tokens: tokenCount, text: fullText };
+  // LanguageModel is not available in this browser - report honestly
+  card.body.innerHTML = `
+    <div style="padding: 14px; background: rgba(248, 81, 73, 0.08); border: 1px solid var(--accent-red); border-radius: 6px; color: var(--accent-red); font-size: 0.82rem; line-height: 1.5;">
+      <strong>⚠️ LanguageModel Not Available</strong><br>
+      <code>window.LanguageModel</code> is not supported or enabled in this browser.
+    </div>
+  `;
+  card.stats.textContent = `❌ API Unavailable`;
+  return { latency: 0, tokens: 0, text: "", error: new Error("LanguageModel unavailable") };
 }
 
 // Run comparison benchmark and accumulate historical metrics
 async function runBenchmark() {
+  if (!resolveLM()) {
+    alert("Prompt API (window.LanguageModel) is not available in this browser. Please see the Setup & Flags Guide above.");
+    return;
+  }
   const userPrompt = (document.getElementById("user-prompt").value || "").trim();
   const systemPrompt = (document.getElementById("system-prompt").value || "").trim();
   const isStreaming = document.getElementById("prompt-streaming-toggle")?.checked ?? true;
@@ -3405,6 +3321,10 @@ async function runBenchmark() {
 
 // Multi-Run Repeatability & Variance Runner
 async function runVarianceTest() {
+  if (!resolveLM()) {
+    alert("Prompt API (window.LanguageModel) is not available in this browser. Please see the Setup & Flags Guide above.");
+    return;
+  }
   const presetId = document.getElementById("variance-preset-select").value;
   const numRuns = parseInt(document.getElementById("variance-runs-count").value, 10) || 3;
   const userPrompt = (document.getElementById("user-prompt").value || "").trim();
