@@ -20,15 +20,15 @@ This studio allows developers, spec editors, and web AI researchers to:
 
 ## 🧭 The 7 Categorical Sampling Presets
 
-| Sampling Mode | Temperature ($T$) | Top-K ($K$) | Target Use Cases |
-| :--- | :---: | :---: | :--- |
-| **`most-predictable`** | `0.0` | `1` | JSON extraction, classification, math, schema enforcement |
-| **`predictable`** | `0.3` | `32` | Summarization, entity extraction, structured QA |
-| **`slightly-predictable`** | `0.7` | `64` | Grounded dialogue, editorial rewriting |
-| **`balanced`** *(Default)* | `1.0` | `64` | General chat, assistive copywriting |
-| **`slightly-creative`** | `1.1` | `72` | Brainstorming, marketing copy |
-| **`creative`** | `1.15` | `80` | Creative writing, storytelling |
-| **`most-creative`** | `1.2` | `100` | Divergent thinking, exploratory ideation |
+| Sampling Mode | Semantic Mode | Target Use Cases |
+| :--- | :--- | :--- |
+| **`most-predictable`** | Deterministic / Greedy | JSON extraction, classification, math, schema enforcement |
+| **`predictable`** | Conservative / Focused | Summarization, entity extraction, structured QA |
+| **`slightly-predictable`** | Structured & Grounded | Grounded dialogue, editorial rewriting |
+| **`balanced`** *(Default)* | Balanced Sampling | General chat, assistive copywriting |
+| **`slightly-creative`** | Expressive & Varied | Brainstorming, marketing copy |
+| **`creative`** | Imaginative / Divergent | Creative writing, storytelling |
+| **`most-creative`** | Highly Exploratory | Divergent thinking, exploratory ideation |
 
 ---
 
