@@ -405,7 +405,7 @@
       font-family: var(--font-mono);
     }
 
-    .temp-bar-bg {
+    .spectrum-bar-bg {
       height: 4px;
       background: var(--border-color);
       border-radius: 2px;
@@ -413,7 +413,7 @@
       margin-top: 3px;
     }
 
-    .temp-bar-fill {
+    .spectrum-bar-fill {
       height: 100%;
       border-radius: 2px;
     }
@@ -1973,7 +1973,7 @@
           <strong>Definition:</strong> The ratio of unique lexical types (<span class="math-var">|V|</span>) to total generated words (<span class="math-var">N</span>), expressed as a percentage.
         </p>
         <p style="font-size: 0.8rem; margin: 4px 0; color: var(--text-muted); line-height: 1.45;">
-          <strong>What it represents:</strong> Evaluates vocabulary richness and repetition resistance. A lower TTR reflects repetitive token choices characteristic of low-temperature greedy decoding. A higher TTR indicates expressive word choice where the model actively samples from a broader lexicon.
+          <strong>What it represents:</strong> Evaluates vocabulary richness and repetition resistance. A lower TTR reflects repetitive token choices characteristic of deterministic greedy decoding in predictable modes. A higher TTR indicates expressive word choice where the model actively samples from a broader lexicon.
         </p>
         <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 6px; border-top: 1px dashed var(--border-color); padding-top: 6px;">
           <strong>References:</strong> Templin, M. C. (1957). <em>Certain Language Skills in Children</em>; Tweedie, F. J., &amp; Baayen, R. H. (1998). <em>How Variable May a Calculation Be? Robustness of Lexical Statistics</em>.
@@ -1997,7 +1997,7 @@
           <strong>Definition:</strong> The cardinality of distinct word types produced in an individual response or accumulated across multiple runs for a preset.
         </p>
         <p style="font-size: 0.8rem; margin: 4px 0; color: var(--text-muted); line-height: 1.45;">
-          <strong>What it represents:</strong> Measures the breadth of the explored vocabulary space. Low-temperature modes stay confined to high-frequency core tokens, while creative modes penetrate deeper into the tail of the model's token distribution.
+          <strong>What it represents:</strong> Measures the breadth of the explored vocabulary space. Highly predictable modes stay confined to high-frequency core tokens, while creative modes penetrate deeper into the tail of the model's token distribution.
         </p>
         <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 6px; border-top: 1px dashed var(--border-color); padding-top: 6px;">
           <strong>References:</strong> Zipf, G. K. (1949). <em>Human Behavior and the Principle of Least Effort</em>; Holtzman et al. (2019). <em>The Curious Case of Neural Text Degeneration</em>.
@@ -2079,8 +2079,6 @@ const PRESETS = [
     id: "most-predictable",
     name: "most-predictable",
     semantic: "Deterministic / Greedy",
-    temp: 0.0,
-    topK: 1,
     color: "#3fb950",
     tier: "M151+ Baseline",
     desc: "Strict greedy decoding. Guarantees 100% identical outputs across runs.",
@@ -2090,8 +2088,6 @@ const PRESETS = [
     id: "predictable",
     name: "predictable",
     semantic: "Very Low Variance",
-    temp: 0.3,
-    topK: 32,
     color: "#58a6ff",
     tier: "M151+ Baseline",
     desc: "High factual grounding and tight coherence with minimal lexical drift.",
@@ -2101,8 +2097,6 @@ const PRESETS = [
     id: "slightly-predictable",
     name: "slightly-predictable",
     semantic: "Controlled Coherence",
-    temp: 0.7,
-    topK: 64,
     color: "#79c0ff",
     tier: "M154+ Expansion",
     fallbackMode: "predictable",
@@ -2113,8 +2107,6 @@ const PRESETS = [
     id: "balanced",
     name: "balanced",
     semantic: "Balanced / Standard",
-    temp: 1.0,
-    topK: 64,
     color: "#d29922",
     tier: "M151+ Baseline",
     desc: "Standard general-purpose distribution for everyday conversational tasks.",
@@ -2124,8 +2116,6 @@ const PRESETS = [
     id: "slightly-creative",
     name: "slightly-creative",
     semantic: "Expressive Variety",
-    temp: 1.1,
-    topK: 72,
     color: "#f0883e",
     tier: "M154+ Expansion",
     fallbackMode: "creative",
@@ -2136,8 +2126,6 @@ const PRESETS = [
     id: "creative",
     name: "creative",
     semantic: "High Divergence",
-    temp: 1.15,
-    topK: 80,
     color: "#bc8cff",
     tier: "M151+ Baseline",
     desc: "High narrative divergence and imaginative multi-path generation.",
@@ -2147,8 +2135,6 @@ const PRESETS = [
     id: "most-creative",
     name: "most-creative",
     semantic: "Maximum Novelty",
-    temp: 1.2,
-    topK: 100,
     color: "#f85149",
     tier: "M151+ Baseline",
     desc: "Maximum entropy sampling across the broadest vocabulary tail.",
@@ -2205,7 +2191,7 @@ let selectedPresets = ["most-predictable", "predictable", "balanced", "creative"
 let cumulativeBenchmarkHistory = {}; // Key: presetId -> Array of samples: [{ latency, tokens, throughput }]
 let activeBarChartMetric = "vocab"; // "latency", "tokens", "throughput", "entropy"
 
-// Helper to strictly sort presets according to canonical temperature spectrum
+// Helper to strictly sort presets according to canonical presets spectrum
 function getSortedActivePresets(presetIds) {
   const canonicalOrder = PRESETS.map(p => p.id);
   return [...presetIds].sort((a, b) => canonicalOrder.indexOf(a) - canonicalOrder.indexOf(b));
@@ -2903,8 +2889,8 @@ function renderSpectrum() {
           ${badgeSpan}
           <button class="card-code-btn" onclick="openCodeModal('${p.id}'); event.stopPropagation();" title="Inspect JavaScript Code" style="padding: 2px 6px; font-size: 0.68rem; line-height: 1;">💻 JS</button>
         </div>
-        <div class="temp-bar-bg">
-          <div class="temp-bar-fill" style="width: ${((PRESETS.indexOf(p) + 1) / PRESETS.length) * 100}%; background: ${isUnsupported ? 'var(--border-color)' : p.color};"></div>
+        <div class="spectrum-bar-bg">
+          <div class="spectrum-bar-fill" style="width: ${((PRESETS.indexOf(p) + 1) / PRESETS.length) * 100}%; background: ${isUnsupported ? 'var(--border-color)' : p.color};"></div>
         </div>
         <div style="margin-top: 4px; font-size: 0.72rem; line-height: 1.3; color: var(--text-muted);">${p.desc}</div>
       </div>
@@ -3426,7 +3412,7 @@ async function runBenchmark() {
   const cards = {};
 
   activePresets.forEach(presetId => {
-    const p = PRESETS.find(x => x.id === presetId) || { color: '#58a6ff', name: presetId, temp: 1.0, topK: 64 };
+    const p = PRESETS.find(x => x.id === presetId) || { color: '#58a6ff', name: presetId };
     const card = document.createElement("div");
     card.className = "result-card";
     card.innerHTML = `
