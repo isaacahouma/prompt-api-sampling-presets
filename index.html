@@ -2061,18 +2061,17 @@
 
 <script>
 // Strict JSON Schema for Constrained Decoding demonstration (W3C Prompt API & Chromium Blink)
-const FLIGHT_SCHEMA = {
+const TRAVEL_ITINERARY_SCHEMA = {
   type: "object",
   properties: {
-    flight: { type: "string", description: "Flight designator code (e.g. UA 482)" },
-    origin: { type: "string", description: "Departure city and IATA code" },
-    destination: { type: "string", description: "Arrival city and IATA code" },
-    status: { type: "string", enum: ["ON TIME", "DELAYED", "CANCELLED"] },
-    gate: { type: "string", description: "Boarding or departure gate" },
-    priceUsd: { type: "number", description: "Ticket fare in USD" }
+    destination: { type: "string", description: "City or location of arrival" },
+    airline: { type: "string", description: "Airline or aviation carrier" },
+    duration_hours: { type: "number", description: "Flight travel duration in hours" },
+    distance_kms: { type: "number", description: "Estimated flight distance in kilometers" }
   },
-  required: ["flight", "origin", "destination", "status", "gate", "priceUsd"]
+  required: ["destination", "airline", "duration_hours", "distance_kms"]
 };
+const FLIGHT_SCHEMA = TRAVEL_ITINERARY_SCHEMA;
 
 const PRESETS = [
   {
@@ -2305,7 +2304,9 @@ function generateRunnableSnippet(presetId, userPrompt, systemPrompt, isStreaming
 
   const sysSnippet = safeSys ? `,\n  initialPrompts: [\n    { role: "system", content: "${safeSys}" }\n  ]` : "";
 
-  const isJsonPrompt = (document.getElementById("sample-prompt-selector")?.value === "json_schema") ||
+  const isJsonPrompt = (document.getElementById("sample-prompt-selector")?.value === "travel_itinerary") ||
+                       (document.getElementById("sample-prompt-selector")?.value === "json_schema") ||
+                       uPrompt.toLowerCase().includes("travel details") ||
                        uPrompt.toLowerCase().includes("flight") ||
                        uPrompt.toLowerCase().includes("json");
 
@@ -2314,21 +2315,19 @@ function generateRunnableSnippet(presetId, userPrompt, systemPrompt, isStreaming
   let nonStreamCall = `await session.prompt("${safeUser}")`;
 
   if (isJsonPrompt) {
-    schemaBlock = `\n// 3. Optional: Define JSON responseConstraint schema for structured extraction
-const flightSchema = {
+    schemaBlock = `\n// 3. Define JSON responseConstraint schema for structured extraction
+const travelItinerarySchema = {
   type: "object",
   properties: {
-    flight: { type: "string" },
-    origin: { type: "string" },
     destination: { type: "string" },
-    status: { type: "string", enum: ["ON TIME", "DELAYED", "CANCELLED"] },
-    gate: { type: "string" },
-    priceUsd: { type: "number" }
+    airline: { type: "string" },
+    duration_hours: { type: "number" },
+    distance_kms: { type: "number" }
   },
-  required: ["flight", "origin", "destination", "status", "gate", "priceUsd"]
+  required: ["destination", "airline", "duration_hours", "distance_kms"]
 };\n`;
-    promptCall = `session.promptStreaming("${safeUser}", { responseConstraint: flightSchema })`;
-    nonStreamCall = `await session.prompt("${safeUser}", { responseConstraint: flightSchema })`;
+    promptCall = `session.promptStreaming("${safeUser}", { responseConstraint: travelItinerarySchema })`;
+    nonStreamCall = `await session.prompt("${safeUser}", { responseConstraint: travelItinerarySchema })`;
   }
 
   const isExpanded = p.tier === "M154+ Expansion";
@@ -3009,7 +3008,7 @@ function applyAndTestPreset(presetId) {
 function updateSchemaBadge(promptKey) {
   const badge = document.getElementById("schema-active-badge");
   if (badge) {
-    badge.style.display = promptKey === "json_schema" ? "inline-flex" : "none";
+    badge.style.display = (promptKey === "travel_itinerary" || promptKey === "json_schema") ? "inline-flex" : "none";
   }
 }
 
@@ -3299,10 +3298,12 @@ async function streamPreset(presetId, userPrompt, systemPrompt, card, runIndex =
       });
 
       if (session) {
-        const isJsonPrompt = (document.getElementById("sample-prompt-selector")?.value === "json_schema") ||
+        const isJsonPrompt = (document.getElementById("sample-prompt-selector")?.value === "travel_itinerary") ||
+                             (document.getElementById("sample-prompt-selector")?.value === "json_schema") ||
+                             (userPrompt || "").toLowerCase().includes("travel details") ||
                              (userPrompt || "").toLowerCase().includes("flight") ||
                              (userPrompt || "").toLowerCase().includes("json");
-        const promptOpts = isJsonPrompt ? { responseConstraint: FLIGHT_SCHEMA } : undefined;
+        const promptOpts = isJsonPrompt ? { responseConstraint: TRAVEL_ITINERARY_SCHEMA } : undefined;
 
         if (isStreaming && typeof session.promptStreaming === "function") {
           // Real-time streaming tokens from real on-device model
